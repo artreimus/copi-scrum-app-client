@@ -1,0 +1,19 @@
+.boards__list {
+  display: flex;
+  flex-flow: row;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.board {
+  border: 1px solid red;
+  width: fit-content;
+  background-color: blanchedalmond;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid sandybrown;
+  margin: 1rem;
+}
