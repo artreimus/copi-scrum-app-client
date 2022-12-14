@@ -4,10 +4,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
 import { useGetUsersQuery } from '../users/usersApiSlice';
 import Select from 'react-select';
+import setArrayIds from '../../utils/setArrayIds';
 
-const UpdateBoardUsersModal = ({ boardUsers, boardAdmins, boardId }) => {
-  const [users, setUsers] = useState(boardUsers.map((admin) => admin._id));
-  const [admins, setAdmins] = useState(boardAdmins.map((admin) => admin._id));
+const UpdateBoardUsersModal = ({
+  boardUsers,
+  boardAdmins,
+  boardId,
+  showUserModal,
+  setShowUserModal,
+}) => {
+  const [users, setUsers] = useState(setArrayIds(boardUsers));
+
+  console.log('boardAdmins', boardAdmins);
   const [
     updateUsers,
     {
@@ -25,7 +33,9 @@ const UpdateBoardUsersModal = ({ boardUsers, boardAdmins, boardId }) => {
     }),
   });
 
-  const usersOptions = data.filter((user) => !admins.includes(user._id));
+  const usersOptions = data.filter(
+    (user) => !setArrayIds(boardAdmins).includes(user._id)
+  );
 
   const options = usersOptions.map((user) => ({
     value: user._id,
@@ -34,11 +44,12 @@ const UpdateBoardUsersModal = ({ boardUsers, boardAdmins, boardId }) => {
 
   const defaultValue = [];
   options.forEach((option) => {
-    console.log('looping');
     if (users.includes(option.value)) {
       defaultValue.push(option);
     }
   });
+
+  console.log('defaultValue', defaultValue);
 
   const onSelectChange = (choices) => {
     setUsers(() => {
@@ -49,28 +60,38 @@ const UpdateBoardUsersModal = ({ boardUsers, boardAdmins, boardId }) => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!isUpdateLoading) {
-      if (users.length) {
-        let usersIds = users.map((user) => user._id);
-        await updateUsers({ boardId, users: usersIds });
-      }
+      await updateUsers({ boardId, users });
     }
   };
 
+  const onCloseModalClicked = () => {
+    setShowUserModal(false);
+  };
+
   const content = (
-    <div className="form">
-      <h1>Add Users</h1>
-      <form className="form" onSubmit={onSubmit}>
-        <Select
-          defaultValue={defaultValue}
-          options={options}
-          isMulti={true}
-          menuShouldScrollIntoView={true}
-          onChange={onSelectChange}
-        />
-        <button className="icon-button" title="Save" disabled={isUpdateLoading}>
-          <FontAwesomeIcon icon={faSave} />
-        </button>
-      </form>
+    <div className={showUserModal ? `modal-show modal` : `modal-hidden modal`}>
+      <div className="modal-content">
+        <button onClick={onCloseModalClicked}>Close</button>{' '}
+        <div className="form">
+          <h1>Add Users</h1>
+          <form className="form" onSubmit={onSubmit}>
+            <Select
+              defaultValue={defaultValue}
+              options={options}
+              isMulti={true}
+              menuShouldScrollIntoView={true}
+              onChange={onSelectChange}
+            />
+            <button
+              className="icon-button"
+              title="Save"
+              disabled={isUpdateLoading}
+            >
+              <FontAwesomeIcon icon={faSave} />
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 

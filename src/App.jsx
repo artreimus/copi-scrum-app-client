@@ -3,20 +3,26 @@ import DashLayout from './components/DashLayout';
 import Layout from './components/Layout';
 import Login from './features/auth/Login';
 import Register from './features/auth/Register';
-import Public from './components/Public';
+import HomePage from './components/HomePage';
 import Welcome from './features/auth/Welcome';
 import BoardsList from './features/boards/BoardsList';
-import UsersList from './features/users/UsersList';
 import NotesList from './features/notes/NotesList';
 import EditUser from './features/users/EditUser';
 import Prefetch from './features/auth/Prefetch';
 import PersistLogin from './features/auth/PersistLogin';
-import { ROLES } from './config/roles';
 import RequireAuth from './features/auth/RequireAuth';
 import useTitle from './hooks/useTitle';
 import Missing from './components/Missing';
 import BoardPage from './features/boards/BoardPage';
 import NotePage from './features/notes/NotePage';
+import UserProfile from './features/users/UserProfile';
+import RequireNonAuth from './features/auth/RequireNonAuth';
+import PrivateBoardAuth from './features/boards/PrivateBoardAuth';
+import PublicBoardAuth from './features/boards/PublicBoardAuth';
+import RequirePrivBoard from './features/auth/RequirePrivBoard';
+import RequirePubBoard from './features/auth/RequirePubBoard';
+import AuthLayout from './features/auth/AuthLayout';
+import ResetPassword from './features/auth/ResetPassword';
 
 function App() {
   useTitle('Copi');
@@ -24,9 +30,12 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         {/* public routes */}
-        <Route index element={<Public />} />
-        <Route path="login" element={<Login />} />{' '}
-        <Route path="register" element={<Register />} />
+        <Route index element={<HomePage />} />
+        <Route element={<AuthLayout />}>
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="reset-password" element={<ResetPassword />} />
+        </Route>
         {/* protected routes */}
         <Route element={<PersistLogin />}>
           {/* <Route
@@ -39,11 +48,27 @@ function App() {
               {/* boards routes */}
               <Route path="boards">
                 <Route index element={<BoardsList />} />
-                <Route path=":id" element={<BoardPage />} />
+                <Route element={<RequireAuth />}>
+                  <Route path=":id" element={<BoardPage />} />
+                </Route>
+                <Route element={<RequireNonAuth />}>
+                  <Route element={<RequirePrivBoard />}>
+                    <Route
+                      path=":id/join-private"
+                      element={<PrivateBoardAuth />}
+                    />
+                  </Route>
+                  <Route element={<RequirePubBoard />}>
+                    <Route
+                      path=":id/join-public"
+                      element={<PublicBoardAuth />}
+                    />
+                  </Route>
+                </Route>
               </Route>
               {/* user routes */}
-              <Route path="users">
-                <Route index element={<UsersList />} />
+              <Route path="user">
+                <Route index element={<UserProfile />} />
                 <Route path=":id" element={<EditUser />} />
               </Route>
 

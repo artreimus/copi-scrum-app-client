@@ -24,7 +24,15 @@ const Board = ({ boardId }) => {
   const navigate = useNavigate();
 
   if (board) {
-    let { title, description, admins, users, startDate, endDate } = board;
+    let {
+      title,
+      description,
+      admins,
+      users,
+      startDate,
+      endDate,
+      private: isPrivate,
+    } = board;
 
     if (startDate) {
       startDate = new Date(startDate).toLocaleString('en-US', {
@@ -60,6 +68,7 @@ const Board = ({ boardId }) => {
       <div className="board">
         <p>Title:{title}</p>
         <p>Description:{description}</p>
+        <p>Private: {isPrivate.toString()}</p>
         <strong>Admins:</strong>
         {adminsElement}
         <strong>Users:</strong>

@@ -6,112 +6,123 @@ import { useLoginMutation } from './authApiSlice';
 import usePersist from '../../hooks/usePersist';
 import PulseLoader from 'react-spinners/PulseLoader';
 import useTitle from '../../hooks/useTitle';
+import useValidateEmail from '../../hooks/useValidateEmail';
 
 const Login = () => {
   useTitle('Copi');
   const userRef = useRef();
   const errRef = useRef();
-  const [username, setUsername] = useState('');
+  const [credential, setCredential] = useState('');
+  const validEmail = useValidateEmail(credential);
   const [password, setPassword] = useState('');
-  const [errMsg, setErrMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const [persist, setPersist] = usePersist();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [login, { isLoading }] = useLoginMutation();
+  const [login, { isLoading, isSuccess, isError, error }] = useLoginMutation();
 
   useEffect(() => {
     userRef.current.focus();
   }, []);
 
   useEffect(() => {
-    setErrMsg('');
-  }, [username, password]);
+    setErrorMsg('');
+  }, [credential, password]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate('/dash');
+    }
+  }, [isSuccess]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const userInfo = validEmail
+      ? {
+          email: credential,
+          password,
+        }
+      : {
+          username: credential,
+          password,
+        };
     try {
-      // unwrap to use trycatch instead of using rtk's error/isError
-      const { accessToken } = await login({ username, password }).unwrap();
+      const { accessToken } = await login(userInfo).unwrap();
       dispatch(setCredentials({ accessToken }));
-      setUsername('');
-      setPassword('');
-      navigate('/dash');
     } catch (err) {
       if (!err.status) {
-        setErrMsg('No Server Response');
+        setErrorMsg('No Server Response');
       } else if (err.status === 400) {
-        setErrMsg('Missing Username or Password');
+        setErrorMsg('Invalid credentials');
       } else if (err.status === 401) {
-        setErrMsg('Unauthorized');
-      } else {
-        setErrMsg(err.data?.message);
+        setErrorMsg('Unauthorized');
       }
       errRef.current.focus();
     }
   };
 
-  const handleUserInput = (e) => setUsername(e.target.value);
+  const handleUserInput = (e) => setCredential(e.target.value);
   const handlePwdInput = (e) => setPassword(e.target.value);
   const handleToggle = () => setPersist((prev) => !prev);
 
-  const errClass = errMsg ? 'errmsg' : 'offscreen';
+  const errorClass = errorMsg ? 'show' : 'hidden';
 
   if (isLoading) return <PulseLoader color={'#FFF'} />;
+  return (
+    <section className="auth-section__form">
+      <p ref={errRef} className={errorClass} aria-live="assertive">
+        {errorMsg}
+      </p>
+      <h2 className="auth-form__title">Login</h2>
+      <form className="auth-form flex-col" onSubmit={handleSubmit}>
+        <label htmlFor="credential">Username or Email:</label>
+        <input
+          type="text"
+          id="credential"
+          name="credential"
+          ref={userRef}
+          value={credential}
+          onChange={handleUserInput}
+          autoComplete="off"
+          required
+        />
 
-  const content = (
-    <section className="public">
-      <header>
-        <h1>Employee Login</h1>
-      </header>
-      <main className="login">
-        <p ref={errRef} className={errClass} aria-live="assertive">
-          {errMsg}
-        </p>
-
-        <form className="form" onSubmit={handleSubmit}>
-          <label htmlFor="username">Username:</label>
-          <input
-            className="form__input"
-            type="text"
-            id="username"
-            ref={userRef}
-            value={username}
-            onChange={handleUserInput}
-            autoComplete="off"
-            required
-          />
-
-          <label htmlFor="password">Password:</label>
-          <input
-            className="form__input"
-            type="password"
-            id="password"
-            onChange={handlePwdInput}
-            value={password}
-            required
-          />
-          <button className="form__submit-button">Sign In</button>
-          <label htmlFor="persist" className="form__persist">
+        <label htmlFor="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          onChange={handlePwdInput}
+          value={password}
+          required
+        />
+        <div>
+          <label htmlFor="persist" className="auth-toggle__label">
             <input
+              className="auth-toggle__checkbox"
               type="checkbox"
-              className="form__checkbox"
               id="persist"
               onChange={handleToggle}
               checked={persist}
             />
-            Trust this device
+            Remember me
           </label>
-        </form>
-      </main>
-      <footer>
-        <Link to="/">Back to Home</Link>
-      </footer>
+        </div>
+        <button className="btn--black">Sign In</button>
+      </form>
+      <div className="center-all auth-form__container--link">
+        <p>
+          Forgot your password?
+          <span>
+            <Link to="/reset-password" className="auth-form__link">
+              Reset Password
+            </Link>
+          </span>
+        </p>
+      </div>
     </section>
   );
-
-  return content;
 };
 
 export default Login;

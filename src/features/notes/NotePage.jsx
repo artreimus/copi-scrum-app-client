@@ -2,7 +2,7 @@ import { useGetNotesQuery } from './notesApiSlice';
 import { useParams } from 'react-router-dom';
 import { useGetSingleNoteQuery } from './notesApiSlice';
 import PulseLoader from 'react-spinners/PulseLoader';
-import UpdateNoteModal from './UpdateNoteModal';
+import UpdateNoteForm from './UpdateNoteForm';
 
 const NotePage = () => {
   const { id: noteId } = useParams();
@@ -23,7 +23,7 @@ const NotePage = () => {
 
   if (isSuccess) {
     const { note } = data;
-    let { title, text, users, startDate, endDate } = note;
+    let { title, text, users, startDate, endDate, status } = note;
 
     if (startDate) {
       startDate = new Date(startDate).toLocaleString('en-US', {
@@ -46,6 +46,7 @@ const NotePage = () => {
         <div className="board">
           <p>Title:{title}</p>
           <p>Text:{text}</p>
+          <p>Status:{status}</p>
           <div>
             <strong>Users:</strong>
             {usersElement}
@@ -53,7 +54,7 @@ const NotePage = () => {
           <p>Start Date:{startDate}</p>
           <p>End Date:{endDate}</p>
         </div>
-        <UpdateNoteModal noteId={noteId} note={note} />
+        <UpdateNoteForm noteId={noteId} note={note} />
       </>
     );
   }

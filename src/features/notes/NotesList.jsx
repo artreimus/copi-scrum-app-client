@@ -4,22 +4,25 @@ import useAuth from '../../hooks/useAuth';
 import PulseLoader from 'react-spinners/PulseLoader';
 import useTitle from '../../hooks/useTitle';
 import NewNoteModal from './NewNoteModal';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 const NotesList = ({ boardId, boardUsers }) => {
-  const {
-    data: notes,
-    isLoading,
-    isSuccess,
-    isError,
-    error,
-  } = useGetNotesQuery(boardId, {
-    // refetch options
-    pollingInterval: 15000,
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
+  const [showNewNoteModal, setNewShowNoteModal] = useState(false);
 
-  const onAddNoteClicked = () => {};
+  const { data, isLoading, isSuccess, isFetching, isError, error } =
+    useGetNotesQuery(boardId, {
+      // refetch options
+      pollingInterval: 15000,
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+    });
+  console.log('isFetching', isFetching);
+  console.log('isLoading', isLoading);
+
+  const onAddNoteBtnclicked = () => {
+    setNewShowNoteModal(true);
+  };
 
   let content = null;
 
@@ -30,7 +33,8 @@ const NotesList = ({ boardId, boardUsers }) => {
   }
 
   if (isSuccess) {
-    const { ids } = notes;
+    const { ids } = data;
+    console.log(ids);
     const tableContent = ids?.length
       ? ids.map((noteId) => (
           <Note key={noteId} noteId={noteId} boardId={boardId} />
@@ -38,10 +42,16 @@ const NotesList = ({ boardId, boardUsers }) => {
       : null;
 
     content = (
-      <div>
-        {tableContent}
-        <NewNoteModal boardUsers={boardUsers} boardId={boardId} />
-      </div>
+      <>
+        <button onClick={onAddNoteBtnclicked}>Create New Note </button>;
+        <div>{tableContent}</div>;
+        <NewNoteModal
+          boardUsers={boardUsers}
+          boardId={boardId}
+          showNewNoteModal={showNewNoteModal}
+          setNewShowNoteModal={setNewShowNoteModal}
+        />
+      </>
     );
   }
 

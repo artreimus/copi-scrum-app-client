@@ -3,9 +3,16 @@ import { useUpdateBoardAdminsMutation } from './boardsApiSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
 import Select from 'react-select';
+import setArrayIds from '../../utils/setArrayIds';
 
-const UpdateBoardAdminsModal = ({ boardAdmins, boardUsers, boardId }) => {
-  const [admins, setAdmins] = useState(boardAdmins.map((admin) => admin._id));
+const UpdateBoardAdminsModal = ({
+  boardAdmins,
+  boardUsers,
+  boardId,
+  showAdminModal,
+  setShowAdminModal,
+}) => {
+  const [admins, setAdmins] = useState(setArrayIds(boardAdmins));
 
   const [updateAdmins, { isSuccess, isLoading, isError, error }] =
     useUpdateBoardAdminsMutation();
@@ -16,14 +23,15 @@ const UpdateBoardAdminsModal = ({ boardAdmins, boardUsers, boardId }) => {
     });
   };
 
+  const canSave = !isLoading && admins.length;
+
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (!isLoading) {
-      if (admins.length) {
-        const users = allUsers.filter((user) => admins.includes(user._id));
-        console.log(users);
-        await updateAdmins({ boardId, admins });
-      }
+
+    if (canSave) {
+      const users = allUsers.filter((user) => admins.includes(user._id));
+      console.log(users);
+      await updateAdmins({ boardId, admins });
     }
   };
 
@@ -41,21 +49,30 @@ const UpdateBoardAdminsModal = ({ boardAdmins, boardUsers, boardId }) => {
     }
   });
 
+  const onCloseModalClicked = () => {
+    setShowAdminModal(false);
+  };
+
   const content = (
-    <div className="form">
-      <h1>Add Admins</h1>
-      <form className="form" onSubmit={onSubmit}>
-        <Select
-          defaultValue={defaultValue}
-          options={options}
-          isMulti={true}
-          menuShouldScrollIntoView={true}
-          onChange={onSelectChange}
-        />
-        <button className="icon-button" title="Save" disabled={isLoading}>
-          <FontAwesomeIcon icon={faSave} />
-        </button>
-      </form>
+    <div className={showAdminModal ? `modal-show modal` : `modal-hidden modal`}>
+      <div className="modal-content">
+        <button onClick={onCloseModalClicked}>Close</button>
+        <h1>Add Admins</h1>
+        <div className="form">
+          <form className="form" onSubmit={onSubmit}>
+            <Select
+              defaultValue={defaultValue}
+              options={options}
+              isMulti={true}
+              menuShouldScrollIntoView={true}
+              onChange={onSelectChange}
+            />
+            <button className="icon-button" title="Save" disabled={!canSave}>
+              <FontAwesomeIcon icon={faSave} />
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 

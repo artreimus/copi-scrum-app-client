@@ -1,132 +1,89 @@
 import { useState, useEffect } from 'react';
-import { useUpdateUserMutation, useDeleteUserMutation } from './usersApiSlice';
+import { useUpdateUserMutation } from './usersApiSlice';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../auth/authSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave, faTrashCan } from '@fortawesome/free-solid-svg-icons';
-import { ROLES } from '../../config/roles';
-
-const USER_REGEX = /^[A-z]{3,20}$/;
-const PWD_REGEX = /^[A-z0-9!@#$%]{4,12}$/;
+import { faSave } from '@fortawesome/free-solid-svg-icons';
+import useValidateUsername from '../../hooks/useValidateUsername';
+import useValidateEmail from '../../hooks/useValidateEmail';
+import useValidatePassword from '../../hooks/useValidatePassword';
 
 const EditUserForm = ({ user }) => {
   const [updateUser, { isLoading, isSuccess, isError, error }] =
     useUpdateUserMutation();
 
-  const [
-    deleteUser,
-    { isSuccess: isDelSuccess, isError: isDelError, error: delerror },
-  ] = useDeleteUserMutation();
-
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [username, setUsername] = useState(user.username);
-  const [validUsername, setValidUsername] = useState(false);
-  const [password, setPassword] = useState('');
-  const [validPassword, setValidPassword] = useState(false);
-  const [roles, setRoles] = useState(user.roles);
-  const [active, setActive] = useState(user.active);
+  const validUsername = useValidateUsername(username);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const validPassword = useValidatePassword(newPassword);
+  const [email, setEmail] = useState(user.email ?? '');
+  const validEmail = useValidateEmail(email);
+  const [canSave, setCanSave] = useState(false);
 
   useEffect(() => {
-    setValidUsername(USER_REGEX.test(username));
-  }, [username]);
-
-  useEffect(() => {
-    setValidPassword(PWD_REGEX.test(password));
-  }, [password]);
-
-  useEffect(() => {
-    console.log(isSuccess);
-    if (isSuccess || isDelSuccess) {
-      setUsername('');
-      setPassword('');
-      setRoles([]);
-      navigate('/dash/users');
+    if (newPassword) {
+      setCanSave(
+        [validUsername, validEmail, validPassword].every(Boolean) && !isLoading
+      );
+    } else {
+      setCanSave([validUsername, validEmail].every(Boolean) && !isLoading);
     }
-  }, [isSuccess, isDelSuccess, navigate]);
+  }, [validUsername, validEmail, validPassword]);
 
+  useEffect(() => {
+    if (isSuccess) {
+      navigate('/dash/user');
+    }
+  }, [isSuccess, navigate]);
+
+  const onEmailChanged = (e) => setEmail(e.currentTarget.value);
   const onUsernameChanged = (e) => setUsername(e.currentTarget.value);
-  const onPasswordChanged = (e) => setPassword(e.currentTarget.value);
-
-  const onRolesChanged = (e) => {
-    const values = Array.from(
-      e.target.selectedOptions,
-      (option) => option.value
-    );
-    console.log(values);
-    setRoles(values);
-  };
-
-  const onActiveChanged = () => setActive((prev) => !prev);
+  const onOldPasswordChanged = (e) => setOldPassword(e.currentTarget.value);
+  const onNewPasswordChanged = (e) => setNewPassword(e.currentTarget.value);
 
   const onSaveUserClicked = async (e) => {
-    if (password) {
-      await updateUser({ id: user.id, username, password, roles, active });
-    } else {
-      await updateUser({ id: user.id, username, roles, active });
-    }
+    try {
+      if (canSave) {
+        if (newPassword && oldPassword) {
+          const { accessToken } = await updateUser({
+            userId: user._id,
+            userInfo: {
+              username,
+              email,
+              oldPassword,
+              newPassword,
+            },
+          }).unwrap();
+          dispatch(setCredentials({ accessToken }));
+        } else {
+          const { accessToken } = await updateUser({
+            userId: user._id,
+            userInfo: {
+              username,
+              email,
+            },
+          }).unwrap();
+          dispatch(setCredentials({ accessToken }));
+        }
+      }
+    } catch (error) {}
   };
-
-  const onDeleteUserClicked = async () => {
-    await deleteUser({ id: user.id });
-  };
-
-  const options = Object.values(ROLES).map((role) => {
-    return (
-      <option key={role} value={role}>
-        {' '}
-        {role}
-      </option>
-    );
-  });
-
-  let canSave;
-  if (password) {
-    canSave =
-      [roles.length, validUsername, validPassword].every(Boolean) && !isLoading;
-  } else {
-    canSave = [roles.length, validUsername].every(Boolean) && !isLoading;
-  }
-
-  const errClass = isError || isDelError ? 'errmsg' : 'offscreen';
-  const validUserClass = !validUsername ? 'form__input--incomplete' : '';
-  const validPwdClass =
-    password && !validPassword ? 'form__input--incomplete' : '';
-  const validRolesClass = !Boolean(roles.length)
-    ? 'form__input--incomplete'
-    : '';
-
-  const errContent = (error?.data?.message || delerror?.data?.message) ?? '';
 
   const content = (
     <>
-      <p className={errClass}>{errContent}</p>
-
       <form className="form" onSubmit={(e) => e.preventDefault()}>
-        <div className="form__title-row">
+        <div>
           <h2>Edit User</h2>
-          <div className="form__action-buttons">
-            <button
-              className="icon-button"
-              title="Save"
-              onClick={onSaveUserClicked}
-              disabled={!canSave}
-            >
-              <FontAwesomeIcon icon={faSave} />
-            </button>
-            <button
-              className="icon-button"
-              title="Delete"
-              onClick={onDeleteUserClicked}
-            >
-              <FontAwesomeIcon icon={faTrashCan} />
-            </button>
-          </div>
         </div>
-        <label className="form__label" htmlFor="username">
-          Username: <span className="nowrap">[3-20 letters]</span>
+        <label htmlFor="username">
+          Username: <span>[3-20 letters]</span>
         </label>
         <input
-          className={`form__input ${validUserClass}`}
           id="username"
           name="username"
           type="text"
@@ -134,49 +91,42 @@ const EditUserForm = ({ user }) => {
           value={username}
           onChange={onUsernameChanged}
         />
-
-        <label className="form__label" htmlFor="password">
-          Password: <span className="nowrap">[empty = no change]</span>{' '}
-          <span className="nowrap">[4-12 chars incl. !@#$%]</span>
+        <label htmlFor="oldPassword">
+          Old Password: <span>[empty = no change]</span>{' '}
+          <span>[4-12 chars incl. !@#$%]</span>
         </label>
         <input
-          className={`form__input ${validPwdClass}`}
-          id="password"
-          name="password"
           type="password"
-          value={password}
-          onChange={onPasswordChanged}
-        />
-
-        <label
-          className="form__label form__checkbox-container"
-          htmlFor="user-active"
-        >
-          ACTIVE:
+          id="oldPassword"
+          name="oldPassword"
+          value={oldPassword}
+          onChange={onOldPasswordChanged}
+        />{' '}
+        <label htmlFor="newPassword">
+          New Passwordassword: <span>[empty = no change]</span>{' '}
+          <span>[4-12 chars incl. !@#$%]</span>
         </label>
         <input
-          className="form__checkbox"
-          id="user-active"
-          name="user-active"
-          type="checkbox"
-          checked={active}
-          onChange={onActiveChanged}
-        />
-
-        <label className="form__label" htmlFor="roles">
-          ASSIGNED ROLES:
+          type="password"
+          id="newPassword"
+          name="newPassword"
+          value={newPassword}
+          onChange={onNewPasswordChanged}
+        />{' '}
+        <label htmlFor="email">
+          Email: <span>[empty = no change]</span>{' '}
+          <span>[4-12 chars incl. !@#$%]</span>
         </label>
-        <select
-          id="roles"
-          name="roles"
-          className={`form__select ${validRolesClass}`}
-          multiple={true}
-          size="3"
-          value={roles}
-          onChange={onRolesChanged}
-        >
-          {options}
-        </select>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          value={email}
+          onChange={onEmailChanged}
+        />
+        <button title="save" onClick={onSaveUserClicked} disabled={!canSave}>
+          <FontAwesomeIcon icon={faSave} />
+        </button>
       </form>
     </>
   );

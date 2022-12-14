@@ -5,7 +5,6 @@ import PulseLoader from 'react-spinners/PulseLoader';
 import useTitle from '../../hooks/useTitle';
 
 const EditUser = () => {
-  useTitle('Copi');
   const { id } = useParams();
   const { user, isLoading } = useGetUsersQuery('usersList', {
     selectFromResult: ({ data, isLoading }) => ({

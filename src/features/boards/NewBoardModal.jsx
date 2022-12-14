@@ -10,10 +10,14 @@ const NewBoardModal = () => {
   const [addNewBoard, { isLoading, isSuccess, isError, error }] =
     useAddNewBoardMutation();
 
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [password, setPassword] = useState('');
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [boardId, setBoardId] = useState('');
 
   useEffect(() => {
     if (isSuccess) {
@@ -21,21 +25,24 @@ const NewBoardModal = () => {
       setDescription('');
       setStartDate(null);
       setEndDate(null);
+      navigate(`/dash/boards/${boardId}`);
     }
   }, [isSuccess]);
 
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onDescriptionChanged = (e) => setDescription(e.target.value);
+  const onPasswordChanged = (e) => setPassword(e.target.value);
 
-  const canSave = [title, description].every(Boolean) && !isLoading;
+  const canSave =
+    [title, description, startDate, endDate].every(Boolean) && !isLoading;
 
   const onSubmit = async (e) => {
     e.preventDefault();
     if (canSave) {
-      const newBoard = { title, description };
-      if (startDate) newBoard.startDate = startDate;
-      if (endDate) newBoard.endDate = endDate;
-      await addNewBoard(newBoard);
+      const newBoard = { title, description, startDate, endDate };
+      if (password) newBoard.password = password;
+      const result = await addNewBoard(newBoard);
+      setBoardId(result.data.board._id);
     }
   };
 
@@ -63,8 +70,23 @@ const NewBoardModal = () => {
           value={description}
           onChange={onDescriptionChanged}
         />
-        <DatePicker onChange={setStartDate} value={startDate} />
-        <DatePicker onChange={setEndDate} value={endDate} />
+        <label htmlFor="password">Board Password:</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="off"
+          value={password}
+          onChange={onPasswordChanged}
+        />
+        <DatePicker
+          onChange={setStartDate}
+          value={startDate ? new Date(startDate) : null}
+        />
+        <DatePicker
+          onChange={setEndDate}
+          value={endDate ? new Date(endDate) : null}
+        />
         <button className="icon-button" title="Save" disabled={!canSave}>
           <FontAwesomeIcon icon={faSave} />
         </button>

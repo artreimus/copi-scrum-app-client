@@ -94,6 +94,14 @@ export const boardsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (result, error, arg) => [{ type: 'Board', id: arg.id }],
     }),
+    accessBoard: builder.mutation({
+      query: ({ boardId, credentials }) => ({
+        url: `/boards/${boardId}/accessBoard`,
+        method: 'POST',
+        body: { ...credentials },
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: 'Board', id: arg.id }],
+    }),
   }),
 });
 
@@ -105,6 +113,7 @@ export const {
   useUpdateBoardAdminsMutation,
   useUpdateBoardUsersMutation,
   useDeleteBoardMutation,
+  useAccessBoardMutation,
 } = boardsApiSlice;
 
 // returns the query result object
