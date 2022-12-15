@@ -1,9 +1,6 @@
-import { useRef, useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { setCredentials } from './authSlice';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useLoginMutation } from './authApiSlice';
-import usePersist from '../../hooks/usePersist';
 import PulseLoader from 'react-spinners/PulseLoader';
 import useTitle from '../../hooks/useTitle';
 import useValidateEmail from '../../hooks/useValidateEmail';

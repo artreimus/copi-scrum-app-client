@@ -7,21 +7,23 @@ import usePersist from '../../hooks/usePersist';
 import PulseLoader from 'react-spinners/PulseLoader';
 import useTitle from '../../hooks/useTitle';
 import useValidateEmail from '../../hooks/useValidateEmail';
+import ErrorModal from '../../components/ErrorModal';
+import useToggleModal from '../../hooks/useToggleModal';
 
 const Login = () => {
   useTitle('Copi');
   const userRef = useRef();
-  const errRef = useRef();
   const [credential, setCredential] = useState('');
   const validEmail = useValidateEmail(credential);
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [persist, setPersist] = usePersist();
 
+  const [login, { isLoading, isSuccess, isError, error }] = useLoginMutation();
+  const [isOpen, setIsOpen] = useToggleModal(isError);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const [login, { isLoading, isSuccess, isError, error }] = useLoginMutation();
 
   useEffect(() => {
     userRef.current.focus();
@@ -59,7 +61,6 @@ const Login = () => {
       } else if (err.status === 401) {
         setErrorMsg('Unauthorized');
       }
-      errRef.current.focus();
     }
   };
 
@@ -67,14 +68,12 @@ const Login = () => {
   const handlePwdInput = (e) => setPassword(e.target.value);
   const handleToggle = () => setPersist((prev) => !prev);
 
-  const errorClass = errorMsg ? 'show' : 'hidden';
-
   if (isLoading) return <PulseLoader color={'#FFF'} />;
   return (
     <section className="auth-section__form">
-      <p ref={errRef} className={errorClass} aria-live="assertive">
-        {errorMsg}
-      </p>
+      {isOpen && (
+        <ErrorModal message={error.data.message} setIsOpen={setIsOpen} />
+      )}
       <h2 className="auth-form__title">Login</h2>
       <form className="auth-form flex-col" onSubmit={handleSubmit}>
         <label htmlFor="credential">Username or Email:</label>

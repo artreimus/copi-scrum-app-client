@@ -3,15 +3,11 @@ import logoLargeImage from '../../img/logo-large.svg';
 
 const AuthHeader = () => {
   const navigate = useNavigate();
-  const onLogoClicked = () => navigate('/');
 
   const content = (
     <header className="auth-header">
       <Link to="/" className="center-all auth-header__link">
-        <div
-          className="container__image auth-header__container--logo"
-          onClick={onLogoClicked}
-        >
+        <div className="container__image auth-header__container--logo">
           <img src={logoLargeImage} alt="Copi logo" />
         </div>
       </Link>

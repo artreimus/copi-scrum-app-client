@@ -1,133 +1,67 @@
-import { useEffect } from 'react';
+import { useState } from 'react';
+import { NavLink, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faFileCirclePlus,
-  faFilePen,
-  faUserGear,
-  faUserPlus,
-  faRightFromBracket,
-} from '@fortawesome/free-solid-svg-icons';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { useSendLogoutMutation } from '../features/auth/authApiSlice';
-import useAuth from '../hooks/useAuth';
-import PulseLoader from 'react-spinners/PulseLoader';
-
-const DASH_REGEX = /^\/dash(\/)?$/;
-const NOTES_REGEX = /^\/dash\/notes(\/)?$/;
-const USERS_REGEX = /^\/dash\/users(\/)?$/;
+import { faBars } from '@fortawesome/free-solid-svg-icons';
+import logoLargeImage from '../img/logo-large.svg';
+import ProfileNav from './ProfileNav';
+import useWindowSize from '../hooks/useWindowSize';
 
 const DashHeader = () => {
-  const { isManager, isAdmin } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const windowSize = useWindowSize();
 
-  const [sendLogout, { isLoading, isSuccess, isError, error }] =
-    useSendLogoutMutation();
+  const onToggleNavBtnclicked = () => setIsOpen((prevIsOpen) => !prevIsOpen);
+  const setNavClass = () => {
+    return isOpen ? 'dash-header__nav' : 'dash-header__nav hidden';
+  };
 
-  useEffect(() => {
-    if (isSuccess) navigate('/');
-  }, [isSuccess, navigate]);
-
-  const onNewNoteClicked = () => navigate('/dash/notes/new');
-  const onNewUserClicked = () => navigate('/dash/users/new');
-  const onNotesClicked = () => navigate('/dash/notes');
-  const onUsersClicked = () => navigate('/dash/users');
-
-  let dashClass = null;
-  // prevents dash / notes / users pages
-  if (
-    !DASH_REGEX.test(pathname) &&
-    !NOTES_REGEX.test(pathname) &&
-    !USERS_REGEX.test(pathname)
-  ) {
-    dashClass = 'dash-header__container--small';
-  }
-
-  let newNoteButton = null;
-  if (NOTES_REGEX.test(pathname)) {
-    newNoteButton = (
-      <button
-        className="icon-button"
-        title="New Note"
-        onClick={onNewNoteClicked}
-      >
-        <FontAwesomeIcon icon={faFileCirclePlus} />
-      </button>
-    );
-  }
-
-  let newUserButton = null;
-  if (USERS_REGEX.test(pathname)) {
-    newUserButton = (
-      <button
-        className="icon-button"
-        title="New User"
-        onClick={onNewUserClicked}
-      >
-        <FontAwesomeIcon icon={faUserPlus} />
-      </button>
-    );
-  }
-
-  let userButton = null;
-  if (isManager || isAdmin) {
-    if (!USERS_REGEX.test(pathname) && pathname.includes('/dash')) {
-      userButton = (
-        <button className="icon-button" title="Users" onClick={onUsersClicked}>
-          <FontAwesomeIcon icon={faUserGear} />
-        </button>
-      );
-    }
-  }
-
-  let notesButton = null;
-  if (!NOTES_REGEX.test(pathname) && pathname.includes('/dash')) {
-    notesButton = (
-      <button className="icon-button" title="Notes" onClick={onNotesClicked}>
-        <FontAwesomeIcon icon={faFilePen} />
-      </button>
-    );
-  }
-
-  const logoutButton = (
-    <button className="icon-button" title="Logout" onClick={sendLogout}>
-      <FontAwesomeIcon icon={faRightFromBracket} />
-    </button>
-  );
-
-  let buttonContent;
-  if (isLoading) {
-    buttonContent = <p>Logging Out...</p>;
-  } else {
-    buttonContent = (
-      <>
-        {newNoteButton}
-        {newUserButton}
-        {notesButton}
-        {userButton}
-        {logoutButton}
-      </>
-    );
-  }
-
-  const errClass = isError ? 'errmsg' : 'offscreen';
-
-  const content = (
+  return (
     <>
-      <p className={errClass}>{error?.data?.message}</p>
-      <header className="dash-header">
-        <div className={`dash-header__container ${dashClass}`}>
-          <Link to="/dash">
-            <h1 className="dash-header__title">techNotes</h1>
-          </Link>
-          <nav className="dash-header__nav">{buttonContent}</nav>
-        </div>
+      <div
+        className={
+          isOpen && windowSize.width <= 1000 ? 'menu-bg' : 'menu-bg hidden'
+        }
+        onClick={() => setIsOpen(false)}
+      ></div>
+      <header className="flex-row dash-header">
+        <button
+          className="dash-header__btn--nav"
+          onClick={() => onToggleNavBtnclicked()}
+        >
+          <FontAwesomeIcon icon={faBars} />
+        </button>
+        <nav className={setNavClass()}>
+          <NavLink
+            to="/dash/notes"
+            style={({ isActive }) => ({
+              fontWeight: isActive ? 600 : 500,
+              color: isActive ? '#888888' : '#d2d2d2',
+              marginBottom: windowSize.width >= 1000 ? 0 : '0.7rem',
+            })}
+          >
+            My Notes
+          </NavLink>
+          <NavLink
+            to="/dash/boards"
+            style={({ isActive }) => ({
+              fontWeight: isActive ? 600 : 500,
+              color: isActive ? '#888888' : '#d2d2d2',
+              marginLeft: windowSize.width >= 1000 ? '2rem' : 0,
+            })}
+          >
+            Boards
+          </NavLink>
+        </nav>
+        <Link to="/" className="center-all auth-header__link">
+          <div className="container__image auth-header__container--logo">
+            <img src={logoLargeImage} alt="Copi logo" />
+          </div>
+        </Link>
+        <ProfileNav />
       </header>
     </>
   );
-
-  return content;
 };
 
 export default DashHeader;
