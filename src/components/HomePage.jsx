@@ -19,10 +19,10 @@ const HomePage = () => {
     <>
       <header className="home-header">
         <div className="center-all">
-          <button className="btn--blue btn--auth" onClick={onSignupBtnClicked}>
+          <button className="btn--auth" onClick={onSignupBtnClicked}>
             sign up
           </button>
-          <button className="btn--blue btn--auth" onClick={onLoginBtnClicked}>
+          <button className="btn--auth" onClick={onLoginBtnClicked}>
             login
           </button>
         </div>

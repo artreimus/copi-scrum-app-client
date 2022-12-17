@@ -8,8 +8,11 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { memo } from 'react';
+import useAuth from '../../hooks/useAuth';
+import setArrayIds from '../../utils/setArrayIds';
 
 const Board = ({ boardId }) => {
+  const { userId } = useAuth();
   const { board } = useGetBoardsQuery('boardsList', {
     selectFromResult: ({ data, isSuccess, isFetching }) => ({
       board: data?.entities[boardId],
@@ -34,19 +37,11 @@ const Board = ({ boardId }) => {
       private: isPrivate,
     } = board;
 
-    if (startDate) {
-      startDate = new Date(startDate).toLocaleString('en-US', {
-        day: 'numeric',
-        month: 'long',
-      });
-    }
-
-    if (endDate) {
-      endDate = new Date(endDate).toLocaleString('en-US', {
-        day: 'numeric',
-        month: 'long',
-      });
-    }
+    const normalizedUsersIds = setArrayIds(users);
+    const normalizedAdminsIds = setArrayIds(admins);
+    const isUser = [...normalizedUsersIds, ...normalizedAdminsIds].includes(
+      userId
+    );
 
     const adminsElement = admins.map((admin, index) => (
       <p key={index}>{admin.username}</p>
@@ -65,28 +60,25 @@ const Board = ({ boardId }) => {
     const onNavigateBtnClick = () => navigate(`/dash/boards/${boardId}`);
 
     return (
-      <div className="board">
-        <p>Title:{title}</p>
-        <p>Description:{description}</p>
-        <p>Private: {isPrivate.toString()}</p>
-        <strong>Admins:</strong>
-        {adminsElement}
-        <strong>Users:</strong>
-        {usersElement}
-        <p>Start Date:{startDate}</p>
-        <p>End Date:{endDate}</p>
-        <button
-          className="icon-button table__button"
-          onClick={onNavigateBtnClick}
-        >
-          <FontAwesomeIcon icon={faPenToSquare} />
-        </button>
-        <button
-          className="icon-button table__button"
-          onClick={onDeleteBtnClick}
-        >
-          DELETE
-        </button>
+      <div className="board-item ">
+        <div className="board-item__content flex-col">
+          <p
+            className="board-item__status"
+            style={{ color: isPrivate ? '#E9294C' : '#60E92F' }}
+          >
+            {isPrivate ? 'Private' : 'Public'}
+          </p>
+          <p className="item__title board-item__title">{title}</p>
+          <p className="item__text board-item__text">{description}</p>
+
+          <button
+            className="board-item__button"
+            onClick={onNavigateBtnClick}
+            style={{ backgroundColor: isUser ? '#0AE4AF' : '#2F5DFF' }}
+          >
+            {isUser ? 'Access' : 'Join'}
+          </button>
+        </div>
       </div>
     );
   } else return null;

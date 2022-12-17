@@ -8,6 +8,7 @@ import { faSave } from '@fortawesome/free-solid-svg-icons';
 import useValidateUsername from '../../hooks/useValidateUsername';
 import useValidateEmail from '../../hooks/useValidateEmail';
 import useValidatePassword from '../../hooks/useValidatePassword';
+import InfoIcon from '../../components/InfoIcon';
 
 const EditUserForm = ({ user }) => {
   const [updateUser, { isLoading, isSuccess, isError, error }] =
@@ -75,15 +76,20 @@ const EditUserForm = ({ user }) => {
   };
 
   const content = (
-    <>
-      <form className="form" onSubmit={(e) => e.preventDefault()}>
-        <div>
-          <h2>Edit User</h2>
+    <form
+      className="user-profile__main user-profile__main-edit flex-col"
+      onSubmit={(e) => e.preventDefault()}
+    >
+      <h3 className="section__title user-profile__title">Edit Profile</h3>
+      <div className="flex-col user-profile__container user-profile__container--info user-profile__container--info-edit">
+        <div className="flex-row user-profile__container-label">
+          <label htmlFor="username" className="user-profile__info__label">
+            Username
+          </label>
+          <InfoIcon msg={'3-20 characters and consist only of letters'} />
         </div>
-        <label htmlFor="username">
-          Username: <span>[3-20 letters]</span>
-        </label>
         <input
+          className="user-profile__info__input"
           id="username"
           name="username"
           type="text"
@@ -91,44 +97,68 @@ const EditUserForm = ({ user }) => {
           value={username}
           onChange={onUsernameChanged}
         />
-        <label htmlFor="oldPassword">
-          Old Password: <span>[empty = no change]</span>{' '}
-          <span>[4-12 chars incl. !@#$%]</span>
-        </label>
+      </div>
+      <div className="flex-col user-profile__container user-profile__container--info user-profile__container--info-edit">
+        <div className="flex-row user-profile__container-label">
+          <label htmlFor="email" className="user-profile__info__label">
+            Email
+          </label>
+        </div>
         <input
-          type="password"
-          id="oldPassword"
-          name="oldPassword"
-          value={oldPassword}
-          onChange={onOldPasswordChanged}
-        />{' '}
-        <label htmlFor="newPassword">
-          New Passwordassword: <span>[empty = no change]</span>{' '}
-          <span>[4-12 chars incl. !@#$%]</span>
-        </label>
-        <input
-          type="password"
-          id="newPassword"
-          name="newPassword"
-          value={newPassword}
-          onChange={onNewPasswordChanged}
-        />{' '}
-        <label htmlFor="email">
-          Email: <span>[empty = no change]</span>{' '}
-          <span>[4-12 chars incl. !@#$%]</span>
-        </label>
-        <input
+          className="user-profile__info__input"
           id="email"
           name="email"
           type="email"
           value={email}
           onChange={onEmailChanged}
         />
-        <button title="save" onClick={onSaveUserClicked} disabled={!canSave}>
-          <FontAwesomeIcon icon={faSave} />
-        </button>
-      </form>
-    </>
+      </div>
+
+      <div className="flex-col user-profile__container user-profile__container--info user-profile__container--info-edit">
+        <div className="flex-row user-profile__container-label">
+          <label htmlFor="oldPassword" className="user-profile__info__label">
+            Old Password <span></span>
+          </label>
+          <InfoIcon msg={'Leave blank to not change password'} />
+        </div>
+
+        <input
+          className="user-profile__info__input"
+          type="password"
+          id="oldPassword"
+          name="oldPassword"
+          value={oldPassword}
+          onChange={onOldPasswordChanged}
+        />
+      </div>
+      <div className="flex-col user-profile__container user-profile__container--info user-profile__container--info-edit">
+        <div className="flex-row user-profile__container-label">
+          <label htmlFor="newPassword" className="user-profile__info__label">
+            New Password
+          </label>
+
+          <InfoIcon msg={'4-12 characeters including !@#$%'} />
+        </div>
+
+        <input
+          className="user-profile__info__input"
+          type="password"
+          id="newPassword"
+          name="newPassword"
+          value={newPassword}
+          onChange={onNewPasswordChanged}
+        />
+      </div>
+
+      <button
+        className="btn--blue user-profile__btn"
+        title="save"
+        onClick={onSaveUserClicked}
+        disabled={!canSave}
+      >
+        save
+      </button>
+    </form>
   );
 
   return content;

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useUpdateBoardUsersMutation } from './boardsApiSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
-import { useGetUsersQuery } from '../users/usersApiSlice';
+import { useGetUsersQuery } from '../user/usersApiSlice';
 import Select from 'react-select';
 import setArrayIds from '../../utils/setArrayIds';
 
@@ -15,7 +15,6 @@ const UpdateBoardUsersModal = ({
 }) => {
   const [users, setUsers] = useState(setArrayIds(boardUsers));
 
-  console.log('boardAdmins', boardAdmins);
   const [
     updateUsers,
     {
@@ -48,8 +47,6 @@ const UpdateBoardUsersModal = ({
       defaultValue.push(option);
     }
   });
-
-  console.log('defaultValue', defaultValue);
 
   const onSelectChange = (choices) => {
     setUsers(() => {

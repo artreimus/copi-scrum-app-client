@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react';
 import { useAddNewBoardMutation } from './boardsApiSlice';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave } from '@fortawesome/free-solid-svg-icons';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-date-picker';
-import useAuth from '../../hooks/useAuth';
 
-const NewBoardModal = () => {
+const NewBoardModal = ({ setIsOpen }) => {
   const [addNewBoard, { isLoading, isSuccess, isError, error }] =
     useAddNewBoardMutation();
 
@@ -17,17 +16,6 @@ const NewBoardModal = () => {
   const [password, setPassword] = useState('');
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [boardId, setBoardId] = useState('');
-
-  useEffect(() => {
-    if (isSuccess) {
-      setTitle('');
-      setDescription('');
-      setStartDate(null);
-      setEndDate(null);
-      navigate(`/dash/boards/${boardId}`);
-    }
-  }, [isSuccess]);
 
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onDescriptionChanged = (e) => setDescription(e.target.value);
@@ -37,60 +25,109 @@ const NewBoardModal = () => {
     [title, description, startDate, endDate].every(Boolean) && !isLoading;
 
   const onSubmit = async (e) => {
+    console.log('submitted pls werk');
+
     e.preventDefault();
     if (canSave) {
       const newBoard = { title, description, startDate, endDate };
       if (password) newBoard.password = password;
       const result = await addNewBoard(newBoard);
-      setBoardId(result.data.board._id);
+      navigate(`/dash/boards/${result.data.board._id}`);
+    }
+  };
+
+  const onModalBgClicked = (e) => {
+    e.preventDefault();
+
+    if (e.target === e.currentTarget) {
+      setIsOpen(false);
     }
   };
 
   const content = (
-    <div className="form">
-      <h1>New Board</h1>
-      <p>{error?.data?.message}</p>
+    <div className="test-1">
+      <div className="modal" onClick={() => setIsOpen(false)}></div>
+      <div className="modal-content modal-content__form">
+        <div className="modal__header">
+          <h3 className="modal__title">New Board</h3>
+          <button
+            className="modal__btn--close"
+            onClick={() => {
+              setIsOpen(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
+        </div>
+        <form className="modal__form" onSubmit={onSubmit}>
+          <div className="flex-col modal__form__container__input">
+            <label htmlFor="title" className="modal__form__label">
+              Title
+            </label>
+            <input
+              className="modal__form__input"
+              id="title"
+              name="title"
+              type="text"
+              autoComplete="off"
+              value={title}
+              onChange={onTitleChanged}
+            />
+          </div>
 
-      <form className="form" onSubmit={onSubmit}>
-        <label htmlFor="title">Title:</label>
-        <input
-          id="title"
-          name="title"
-          type="text"
-          autoComplete="off"
-          value={title}
-          onChange={onTitleChanged}
-        />
-        <label htmlFor="description">Description:</label>
-        <input
-          id="description"
-          name="description"
-          type="textarea"
-          autoComplete="off"
-          value={description}
-          onChange={onDescriptionChanged}
-        />
-        <label htmlFor="password">Board Password:</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="off"
-          value={password}
-          onChange={onPasswordChanged}
-        />
-        <DatePicker
-          onChange={setStartDate}
-          value={startDate ? new Date(startDate) : null}
-        />
-        <DatePicker
-          onChange={setEndDate}
-          value={endDate ? new Date(endDate) : null}
-        />
-        <button className="icon-button" title="Save" disabled={!canSave}>
-          <FontAwesomeIcon icon={faSave} />
-        </button>
-      </form>
+          <div className="flex-col modal__form__container__input">
+            <label htmlFor="description" className="modal__form__label">
+              Description
+            </label>
+            <input
+              className="modal__form__input"
+              id="description"
+              name="description"
+              type="textarea"
+              autoComplete="off"
+              value={description}
+              onChange={onDescriptionChanged}
+            />
+          </div>
+          <div className="flex-col modal__form__container__input">
+            <label htmlFor="password" className="modal__form__label">
+              Password
+            </label>
+            <input
+              className="modal__form__input"
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="off"
+              value={password}
+              onChange={onPasswordChanged}
+            />
+          </div>
+          <div className="modal__form__container__date">
+            <p className="modal__form__label">Start Date (Target)</p>
+            <DatePicker
+              onChange={setStartDate}
+              value={startDate ? new Date(startDate) : null}
+            />
+          </div>
+          <div className="modal__form__container__date">
+            <p className="modal__form__label">End Date (Target)</p>
+            <DatePicker
+              onChange={setEndDate}
+              value={endDate ? new Date(endDate) : null}
+            />
+          </div>
+          <button
+            className="btn--blue modal__form__btn"
+            title="Save"
+            disabled={!canSave}
+            type="submit"
+            // onClick={() => console.log('submitted!!!')}
+          >
+            CREATE
+          </button>
+        </form>
+      </div>
     </div>
   );
 

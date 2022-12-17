@@ -30,7 +30,6 @@ const UpdateBoardAdminsModal = ({
 
     if (canSave) {
       const users = allUsers.filter((user) => admins.includes(user._id));
-      console.log(users);
       await updateAdmins({ boardId, admins });
     }
   };

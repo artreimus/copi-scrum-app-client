@@ -53,7 +53,7 @@ const DashHeader = () => {
             Boards
           </NavLink>
         </nav>
-        <Link to="/" className="center-all auth-header__link">
+        <Link to="/dash" className="center-all auth-header__link">
           <div className="container__image auth-header__container--logo">
             <img src={logoLargeImage} alt="Copi logo" />
           </div>

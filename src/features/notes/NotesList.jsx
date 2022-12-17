@@ -17,8 +17,6 @@ const NotesList = ({ boardId, boardUsers }) => {
       refetchOnFocus: true,
       refetchOnMountOrArgChange: true,
     });
-  console.log('isFetching', isFetching);
-  console.log('isLoading', isLoading);
 
   const onAddNoteBtnclicked = () => {
     setNewShowNoteModal(true);
@@ -34,7 +32,6 @@ const NotesList = ({ boardId, boardUsers }) => {
 
   if (isSuccess) {
     const { ids } = data;
-    console.log(ids);
     const tableContent = ids?.length
       ? ids.map((noteId) => (
           <Note key={noteId} noteId={noteId} boardId={boardId} />
