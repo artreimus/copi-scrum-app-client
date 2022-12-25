@@ -1,17 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useUpdateBoardUsersMutation } from './boardsApiSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave } from '@fortawesome/free-solid-svg-icons';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useGetUsersQuery } from '../user/usersApiSlice';
 import Select from 'react-select';
 import setArrayIds from '../../utils/setArrayIds';
+import InfoIcon from '../../components/InfoIcon';
 
 const UpdateBoardUsersModal = ({
   boardUsers,
   boardAdmins,
   boardId,
-  showUserModal,
-  setShowUserModal,
+  setIsOpen,
 }) => {
   const [users, setUsers] = useState(setArrayIds(boardUsers));
 
@@ -66,28 +66,51 @@ const UpdateBoardUsersModal = ({
   };
 
   const content = (
-    <div className={showUserModal ? `modal-show modal` : `modal-hidden modal`}>
-      <div className="modal-content">
-        <button onClick={onCloseModalClicked}>Close</button>{' '}
-        <div className="form">
-          <h1>Add Users</h1>
-          <form className="form" onSubmit={onSubmit}>
+    <div className="container--modal">
+      <div className="modal" onClick={() => setIsOpen(false)}></div>
+      <div className="modal-content modal-content__form">
+        <div className="modal__header">
+          <h3 className="modal__title">Edit Board Users</h3>
+          <button
+            className="modal__btn--close"
+            onClick={() => {
+              setIsOpen(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
+        </div>
+
+        <form className="modal__form" onSubmit={onSubmit}>
+          <div className="flex-col modal__form__container__input">
+            <div className="flex-row modal__form__container__input--label">
+              <p className="modal__form__label">Users</p>
+              <InfoIcon msg={'Removing user remove him/her from the board'} />
+            </div>
             <Select
+              styles={{
+                control: (baseStyles, state) => ({
+                  ...baseStyles,
+                  borderColor: 'black',
+                  borderRadius: '10px',
+                  fontSize: '1rem',
+                }),
+              }}
               defaultValue={defaultValue}
               options={options}
               isMulti={true}
               menuShouldScrollIntoView={true}
               onChange={onSelectChange}
             />
-            <button
-              className="icon-button"
-              title="Save"
-              disabled={isUpdateLoading}
-            >
-              <FontAwesomeIcon icon={faSave} />
-            </button>
-          </form>
-        </div>
+          </div>
+          <button
+            className="btn--blue modal__form__btn"
+            title="Save"
+            disabled={isUpdateLoading}
+          >
+            Save
+          </button>
+        </form>
       </div>
     </div>
   );

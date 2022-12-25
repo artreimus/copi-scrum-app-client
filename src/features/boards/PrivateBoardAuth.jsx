@@ -14,26 +14,39 @@ const PrivateBoardAuth = () => {
 
   const onPasswordChanged = (e) => setPassword(e.target.value);
 
-  const onFormSubmit = async (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     await accessBoard({ boardId, credentials: { userId, password } });
   };
 
   return (
-    <div>
-      <form onSubmit={onFormSubmit}>
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          value={password}
-          onChange={onPasswordChanged}
-          required
-        />
-        <button>Submit</button>
-      </form>
-    </div>
+    <section className="center-all join-board">
+      <article className="article--white join-board__article center-all">
+        <h2 className="article__about__title">Join Board</h2>
+        <p className="join-board__article__text">
+          Get ready to take your teamwork to the next level! Submit the password
+          to board to join the private scrum board and start sprinting towards
+          success!
+        </p>
+        <form onSubmit={onSubmit} className="join-board__form flex-col ">
+          <div className="flex-col ">
+            <label htmlFor="password" className="join-board__article__label">
+              Password
+            </label>
+            <input
+              className="join-board__article__input"
+              id="password"
+              name="password"
+              type="password"
+              value={password}
+              onChange={onPasswordChanged}
+              required
+            />
+          </div>
+          <button className="btn--blue join-board__article__btn">Submit</button>
+        </form>
+      </article>
+    </section>
   );
 };
 

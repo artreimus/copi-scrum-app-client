@@ -18,9 +18,21 @@ const PublicBoardAuth = () => {
   if (isLoading) return <PulseLoader color="#FFF" />;
 
   return (
-    <div>
-      <button onClick={onBtnClicked}> Join board</button>
-    </div>
+    <section className="center-all join-board">
+      <article className="article--white join-board__article center-all">
+        <h2 className="article__about__title">Join Board</h2>
+        <p className="article__join-board__text ">
+          Get ready to take your teamwork to the next level! Press the button to
+          join the public scrum board and start sprinting towards success
+        </p>
+        <button
+          onClick={onBtnClicked}
+          className="btn--blue join-board__article__btn"
+        >
+          Join board
+        </button>
+      </article>
+    </section>
   );
 };
 

@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAddNewBoardMutation } from './boardsApiSlice';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-date-picker';
+import InfoIcon from '../../components/InfoIcon';
 
 const NewBoardModal = ({ setIsOpen }) => {
   const [addNewBoard, { isLoading, isSuccess, isError, error }] =
@@ -36,16 +37,8 @@ const NewBoardModal = ({ setIsOpen }) => {
     }
   };
 
-  const onModalBgClicked = (e) => {
-    e.preventDefault();
-
-    if (e.target === e.currentTarget) {
-      setIsOpen(false);
-    }
-  };
-
   const content = (
-    <div className="test-1">
+    <div className="container--modal">
       <div className="modal" onClick={() => setIsOpen(false)}></div>
       <div className="modal-content modal-content__form">
         <div className="modal__header">
@@ -61,9 +54,12 @@ const NewBoardModal = ({ setIsOpen }) => {
         </div>
         <form className="modal__form" onSubmit={onSubmit}>
           <div className="flex-col modal__form__container__input">
-            <label htmlFor="title" className="modal__form__label">
-              Title
-            </label>
+            <div className="flex-row modal__form__container__input--label">
+              <label htmlFor="title" className="modal__form__label">
+                Title
+              </label>
+              <InfoIcon msg={'5 to 25 characters'} />
+            </div>
             <input
               className="modal__form__input"
               id="title"
@@ -72,27 +68,40 @@ const NewBoardModal = ({ setIsOpen }) => {
               autoComplete="off"
               value={title}
               onChange={onTitleChanged}
+              minLength="5"
+              maxLength="25"
             />
           </div>
 
           <div className="flex-col modal__form__container__input">
-            <label htmlFor="description" className="modal__form__label">
-              Description
-            </label>
-            <input
+            <div className="flex-row modal__form__container__input--label">
+              <label htmlFor="description" className="modal__form__label">
+                Description
+              </label>
+              <InfoIcon msg={'5 to 100 characters'} />
+            </div>
+            <textarea
               className="modal__form__input"
               id="description"
               name="description"
-              type="textarea"
               autoComplete="off"
               value={description}
               onChange={onDescriptionChanged}
+              minLength="5"
+              maxLength="100"
             />
           </div>
           <div className="flex-col modal__form__container__input">
-            <label htmlFor="password" className="modal__form__label">
-              Password
-            </label>
+            <div className="flex-row modal__form__container__input--label">
+              <label htmlFor="password" className="modal__form__label">
+                Password
+              </label>
+              <InfoIcon
+                msg={
+                  'Leave as blank to set board as public. 6-100 characters if needed'
+                }
+              />
+            </div>
             <input
               className="modal__form__input"
               id="password"
@@ -100,6 +109,9 @@ const NewBoardModal = ({ setIsOpen }) => {
               type="password"
               autoComplete="off"
               value={password}
+              minLength={password && 6}
+              maxLength="100"
+              placeholder="Leave as blank to set board as public"
               onChange={onPasswordChanged}
             />
           </div>
@@ -121,8 +133,6 @@ const NewBoardModal = ({ setIsOpen }) => {
             className="btn--blue modal__form__btn"
             title="Save"
             disabled={!canSave}
-            type="submit"
-            // onClick={() => console.log('submitted!!!')}
           >
             CREATE
           </button>

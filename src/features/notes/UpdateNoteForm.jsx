@@ -1,14 +1,15 @@
 import { useUpdateNoteMutation } from './notesApiSlice';
 import { useGetSingleBoardQuery } from '../boards/boardsApiSlice';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave } from '@fortawesome/free-solid-svg-icons';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import Select from 'react-select';
 import { NOTE_STATUS } from '../../config/noteStatus';
 import DatePicker from 'react-date-picker';
 import verifyNoteStatus from '../../utils/verifyNoteStatus';
+import InfoIcon from '../../components/InfoIcon';
 
-const UpdateNoteForm = ({ note }) => {
+const UpdateNoteForm = ({ note, setIsOpen }) => {
   const [title, setTitle] = useState(note?.title);
   const [text, setText] = useState(note?.text);
   const [status, setStatus] = useState(note?.status);
@@ -33,6 +34,10 @@ const UpdateNoteForm = ({ note }) => {
     isError: isBoardError,
     error: boardError,
   } = useGetSingleBoardQuery(note.boardId);
+
+  useEffect(() => {
+    if (isUpdateSuccess) setIsOpen(false);
+  }, [isUpdateSuccess]);
 
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onTextChanged = (e) => setText(e.target.value);
@@ -75,62 +80,135 @@ const UpdateNoteForm = ({ note }) => {
     const statusDefaultValue = { value: status, label: status };
 
     const content = (
-      <div className="form">
-        <form className="form" onSubmit={onSubmit}>
-          <label htmlFor="title">Title:</label>
-          <input
-            id="title"
-            name="title"
-            type="text"
-            autoComplete="off"
-            value={title}
-            onChange={onTitleChanged}
-          />
-          <label htmlFor="text">Description:</label>
-          <input
-            id="text"
-            name="text"
-            type="textarea"
-            autoComplete="off"
-            value={text}
-            onChange={onTextChanged}
-          />
-          <Select
-            defaultValue={defaultValue}
-            options={options}
-            isMulti={true}
-            onChange={onSelectChange}
-          />
-          <Select
-            defaultValue={statusDefaultValue}
-            options={statusOptions}
-            onChange={onStatusChange}
-          />
-          <DatePicker
-            onChange={setStartDate}
-            value={startDate ? new Date(startDate) : null}
-            required={
-              status === NOTE_STATUS.InProgress ||
-              status === NOTE_STATUS.Testing ||
-              status === NOTE_STATUS.Done
-            }
-          />
-          <DatePicker
-            onChange={setEndDate}
-            value={endDate ? new Date(endDate) : null}
-            required={status === NOTE_STATUS.Done}
-          />
-          <button
-            className="icon-button"
-            title="Save"
-            disabled={
-              !verifyNoteStatus({ status, startDate, endDate }) ||
-              isUpdateLoading
-            }
-          >
-            <FontAwesomeIcon icon={faSave} />
-          </button>
-        </form>
+      <div className="container--modal">
+        <div className="modal" onClick={() => setIsOpen(false)}></div>
+        <div className="modal-content modal-content__form">
+          <div className="modal__header">
+            <h3 className="modal__title">Edit Note</h3>
+            <button
+              className="modal__btn--close"
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              <FontAwesomeIcon icon={faXmark} />
+            </button>
+          </div>
+
+          <form className="modal__form" onSubmit={onSubmit}>
+            <div className="flex-col modal__form__container__input">
+              <div className="flex-row modal__form__container__input--label">
+                <label htmlFor="title" className="modal__form__label">
+                  Title
+                </label>
+                <InfoIcon msg={'5-25 characters'} />
+              </div>
+              <input
+                className="modal__form__input"
+                id="title"
+                name="title"
+                type="text"
+                autoComplete="off"
+                value={title}
+                onChange={onTitleChanged}
+                minLength="5"
+                maxLength="25"
+              />
+            </div>
+            <div className="flex-col modal__form__container__input">
+              <div className="flex-row modal__form__container__input--label">
+                <label htmlFor="text" className="modal__form__label">
+                  Description
+                </label>
+                <InfoIcon msg={'5-100 characters'} />
+              </div>
+
+              <textarea
+                className="modal__form__input"
+                name="text"
+                id="text"
+                autoComplete="off"
+                value={text}
+                onChange={onTextChanged}
+                minLength="5"
+                maxLength="100"
+              />
+            </div>
+            <div className="flex-col modal__form__container__input">
+              <p className="modal__form__label">Assigned Users</p>
+
+              <Select
+                styles={{
+                  control: (baseStyles, state) => ({
+                    ...baseStyles,
+                    borderColor: 'black',
+                    borderRadius: '10px',
+                    fontSize: '1rem',
+                  }),
+                }}
+                defaultValue={defaultValue}
+                options={options}
+                isMulti={true}
+                onChange={onSelectChange}
+              />
+            </div>
+            <div className="flex-col modal__form__container__input">
+              <p className="modal__form__label">Status</p>
+              <Select
+                styles={{
+                  control: (baseStyles, state) => ({
+                    ...baseStyles,
+                    borderColor: 'black',
+                    borderRadius: '10px',
+                    fontSize: '1rem',
+                  }),
+                }}
+                defaultValue={statusDefaultValue}
+                options={statusOptions}
+                onChange={onStatusChange}
+              />
+            </div>
+
+            <div className="flex-col modal__form__container__date">
+              <div className="flex-row modal__form__container__input--label">
+                <p className="modal__form__label">Start Date</p>{' '}
+                <InfoIcon msg={'Start Date must be in sync with status'} />
+              </div>
+              <DatePicker
+                onChange={setStartDate}
+                value={startDate ? new Date(startDate) : null}
+                required={
+                  status === NOTE_STATUS.InProgress ||
+                  status === NOTE_STATUS.Testing ||
+                  status === NOTE_STATUS.Done
+                }
+              />
+            </div>
+
+            <div className="flex-col modal__form__container__date">
+              <div className="flex-row modal__form__container__input--label">
+                <p className="modal__form__label">End Date</p>{' '}
+                <InfoIcon msg={'End Date must be in sync with status'} />
+              </div>
+              <DatePicker
+                onChange={setEndDate}
+                value={endDate ? new Date(endDate) : null}
+                required={status === NOTE_STATUS.Done}
+              />
+            </div>
+
+            <button
+              className="btn--blue modal__form__btn"
+              title="Save"
+              disabled={
+                !verifyNoteStatus({ status, startDate, endDate }) ||
+                isUpdateLoading
+              }
+            >
+              Update
+            </button>
+          </form>
+        </div>
       </div>
     );
 

@@ -159,6 +159,18 @@ img {
   font-size: 1.1rem;
 }
 
+.btn--red {
+  background-color: #f63838;
+  color: #fefefe;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  border-radius: 15px;
+  font-weight: 700;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  font-size: 1.1rem;
+}
+
 .btn--blue:disabled {
   opacity: 0.6;
 }
@@ -210,15 +222,9 @@ img {
 
 .menu-bg {
   position: absolute;
-  z-index: 5;
+  z-index: 1;
   width: 90%;
   height: 100vh;
-}
-
-.section-header {
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0rem 1.5rem;
 }
 
 .section__title {
@@ -228,10 +234,14 @@ img {
   letter-spacing: 0.25px;
   color: #313131;
   margin: 0 auto;
+  max-width: 200px;
+  text-align: center;
 }
 
 .info-icon {
   color: #e2e2e2;
+  margin-left: 0.5rem;
+  padding: 0 0.5rem;
 }
 
 .boards-list__container {
@@ -244,22 +254,32 @@ img {
   padding: 1rem 0;
 }
 
-.item__title {
-  font-weight: 600;
-  font-size: 1.2rem;
-  text-align: center;
-  max-width: 100%;
+.truncate-text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.item__title {
+  font-weight: 600;
+  font-size: 1.2rem;
+  text-align: center;
+  max-width: 100%;
+}
+
 .item__text {
   font-size: 0.8rem;
   max-width: 100%;
-  white-space: nowrap;
+  /* max-height: 50%; */
+  overflow-wrap: anywhere;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* white-space: wrap; */
+  /* inline-size: 150px; */
+  /* overflow-wrap: break-word; */
+  /* hyphens: manual; */
+  /* white-space: nowrap; */
+  /* overflow: hidden; */
 }
 
 .section__header__button {
@@ -269,6 +289,11 @@ img {
   border-radius: 25px;
   padding: 0.3rem 0.7rem;
   font-size: 0.9rem;
+}
+
+.section__header__button--secondary {
+  top: 14%;
+  right: 15%;
 }
 
 .section__header {
@@ -281,6 +306,15 @@ img {
   padding: 0.5rem;
 }
 
+.section__header__board-page__about,
+.section__header__note-page {
+  padding: 1.5rem;
+}
+
+.section__header__note-page {
+  margin-top: 0;
+}
+
 /* Modals */
 .modal-hidden {
   display: none; /* Hidden by default */
@@ -290,9 +324,9 @@ img {
   display: block; /* Hidden by default */
 }
 
-.test-1 {
+.container--modal {
   position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
+  z-index: 5; /* Sit on top */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
@@ -368,13 +402,22 @@ img {
 .modal__form__label {
   font-weight: 500;
   margin-bottom: 0.3rem;
-  /* font-size: 0.9rem; */
+  font-size: 0.9rem;
+}
+
+.modal__form__container__input--label {
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.modal__form__container__input--label > .modal__form__label {
+  margin: 0;
 }
 
 .modal__form__input {
   border-radius: 8px;
   border: 1.5px solid black;
-  /* font-size: 0.8rem; */
+  font-size: 0.8rem;
   padding: 0.2rem 0.4rem;
 }
 
@@ -391,6 +434,11 @@ img {
   border-radius: 15px;
   border: 1px solid black;
   padding: 3px 6px;
+  font-size: 0.9rem;
+}
+
+.modal__form__select {
+  border-color: black;
 }
 
 .modal-error {
@@ -410,6 +458,22 @@ img {
 .modal-error__btn {
   background-color: transparent;
   border: none;
+}
+
+.modal__text--prompt {
+  text-align: center;
+  margin: 0.6rem 0 1rem 0;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+
+.modal__btn--prompt {
+  font-size: 0.8rem;
+  padding: 0.4em 0.8em;
+}
+
+.modal__btn--prompt + .modal__btn--prompt {
+  margin-left: 0.5rem;
 }
 
 /* modal */
@@ -474,8 +538,7 @@ img {
 .floating-menu {
   position: absolute;
   z-index: 1;
-  top: -53px;
-  left: 22px;
+  left: 30px;
   background-color: #fefefe;
   color: rgb(51, 51, 51);
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
@@ -588,7 +651,7 @@ img {
   padding: 1rem 0.8rem;
   font-weight: 500;
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -730,7 +793,6 @@ img {
 }
 
 .user-profile__info__label {
-  margin-right: 0.5rem;
   font-weight: 500;
 }
 
@@ -787,6 +849,153 @@ img {
   margin-top: auto;
 }
 
+.board-page__nav {
+  background-color: #ffffff;
+  padding: 0.8rem 1rem;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #d6d6d6;
+  border-bottom: 1px solid #d6d6d6;
+}
+
+.board-page__nav__container--links > a {
+  color: #000;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.board-page__nav__container--btns {
+  margin-left: auto;
+}
+
+.board-page__nav__btn {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.board-page__nav__btn + .board-page__nav__btn {
+  margin-left: 0.5rem;
+}
+
+.board-page__date {
+  text-align: center;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.article--white {
+  background-color: #ffffff;
+  border-radius: 10px;
+}
+
+.article__about {
+  font-size: 0.9rem;
+  padding: 1.5rem 1.25rem;
+  width: 90%;
+  margin: 0 auto;
+  max-width: 1000px;
+}
+
+.article__about__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.article__about__container__text {
+  border: 1px solid black;
+  border-radius: 2px;
+  margin: 0.2rem 0 0.5rem 0;
+  padding: 0.3rem;
+  overflow-wrap: break-word;
+}
+
+.article__about__label {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.article__about__text--private {
+  text-transform: capitalize;
+}
+
+.article__about__grid {
+  display: grid;
+  grid-template-columns: 160px auto;
+  gap: 7px 10px;
+}
+
+.article__about__container--users {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 35px);
+  gap: 5px 3px;
+}
+
+.note-item {
+  border-radius: 10px;
+  background-color: #ffffff;
+  padding: 1.2rem 2rem;
+}
+
+.note-item__container--grid {
+  display: grid;
+  grid-template-columns: 50% auto;
+  column-gap: 5px;
+}
+
+.note-item__title {
+  margin-bottom: 0.5rem;
+}
+
+.note-item_-text {
+  margin-bottom: 0.25rem;
+}
+
+.note-item__date {
+  margin: auto 0;
+}
+
+.join-board {
+  height: 80vh;
+}
+
+.join-board__article {
+  padding: 2rem 2rem;
+  width: 80%;
+  max-width: 600px;
+  flex-direction: column;
+}
+
+.join-board__article__text {
+  line-height: 1.5rem;
+}
+
+.join-board__form {
+  width: 80%;
+  margin-top: 1rem;
+}
+
+.join-board__article__label {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  margin-bottom: 0.5rem;
+}
+
+.join-board__article__input {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+}
+
+.join-board__article__btn {
+  font-size: 1rem;
+  margin-top: 0.8rem;
+  align-self: center;
+}
+
 @media (min-width: 600px) {
   .display-lg--visible {
     display: none;
@@ -800,6 +1009,10 @@ img {
     font-size: 0.9rem;
   }
 
+  .section__header__button--secondary {
+    right: 25%;
+  }
+
   .section__header__button > svg {
     margin-left: 0.3rem;
   }
@@ -810,6 +1023,9 @@ img {
     padding: 0.8rem 1.2rem;
     font-size: 1.2rem;
   }
+  .section__title {
+    max-width: 300px;
+  }
 }
 
 @media (min-width: 1000px) {
@@ -819,6 +1035,22 @@ img {
 
   .modal__form {
     font-size: 1.2rem;
+  }
+
+  .modal__form__label {
+    font-size: 1rem;
+  }
+
+  .modal__form__input {
+    font-size: 1rem;
+  }
+
+  .modal__btn--prompt {
+    font-size: 1rem;
+  }
+
+  .react-date-picker__wrapper {
+    font-size: 1rem;
   }
 
   .item__title {
@@ -854,7 +1086,7 @@ img {
   .home-main__btn--blue {
     background-color: #3861f6;
     color: #fefefe;
-    padding: 0.7rem 1.2rem;
+    padding: 0.7em 1.2em;
     align-self: start;
   }
 
@@ -890,6 +1122,22 @@ img {
     margin-top: 1rem;
   }
 
+  .section__header__button--secondary {
+    right: 200px;
+  }
+
+  .section__title {
+    max-width: 600px;
+  }
+
+  .section__header__board-page__about {
+    margin-top: 1.5rem;
+  }
+
+  .section__header__note-page {
+    margin-top: 0;
+  }
+
   .section__header__title {
     font-size: 2.5rem;
   }
@@ -911,5 +1159,28 @@ img {
     grid-template-columns: repeat(auto-fill, 220px);
     grid-auto-rows: 260px;
     gap: 20px;
+  }
+
+  .board-page__nav__btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .article__about {
+    font-size: 1rem;
+    padding: 1.8rem 1.5rem;
+  }
+
+  .article__about__grid {
+    gap: 10px 15px;
+  }
+
+  .article__about__title {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .article__about__container__text {
+    margin: 0.5rem 0 0.8rem 0;
   }
 }

@@ -40,14 +40,7 @@ const NotesList = ({ boardId, boardUsers }) => {
 
     content = (
       <>
-        <button onClick={onAddNoteBtnclicked}>Create New Note </button>;
         <div>{tableContent}</div>;
-        <NewNoteModal
-          boardUsers={boardUsers}
-          boardId={boardId}
-          showNewNoteModal={showNewNoteModal}
-          setNewShowNoteModal={setNewShowNoteModal}
-        />
       </>
     );
   }

@@ -1,76 +1,171 @@
 import { useState, useEffect } from 'react';
 import { useUpdateBoardMutation } from './boardsApiSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave } from '@fortawesome/free-solid-svg-icons';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-date-picker';
+import InfoIcon from '../../components/InfoIcon';
 
-const UpdateBoardModal = ({
-  board,
-  boardId,
-  showBoardModal,
-  setShowBoardModal,
-}) => {
+const UpdateBoardModal = ({ board, boardId, setIsOpen }) => {
   const [title, setTitle] = useState(board?.title);
   const [description, setDescription] = useState(board?.description);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newPasswordMessage, setNewPasswordMessage] = useState('');
+
   const [startDate, setStartDate] = useState(board?.startDate);
   const [endDate, setEndDate] = useState(board?.endDate);
+
+  console.log(newPassword.length);
 
   const [updateBoard, { isSuccess, isLoading, isError, error }] =
     useUpdateBoardMutation();
 
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onDescriptionChanged = (e) => setDescription(e.target.value);
+  const onOldpasswordChanged = (e) => setOldPassword(e.target.value);
+  const onNewPasswordChanged = (e) => setNewPassword(e.target.value);
+
+  useEffect(() => {
+    if (isSuccess) setIsOpen(false);
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (board.private) {
+      setNewPasswordMessage(
+        'If changing password leave blank to set board as public. 6-100 characters if needed'
+      );
+    } else {
+      setNewPasswordMessage('Leave blank to not change password.');
+    }
+  }, [board.private]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!isLoading) {
       const updatedBoard = { title, description, startDate, endDate };
+      if (oldPassword) updatedBoard.oldPassword = oldPassword;
+      if (newPassword) updatedBoard.newPassword = newPassword;
       await updateBoard({ boardId, board: updatedBoard });
     }
   };
 
-  const onCloseModalClicked = () => {
-    setShowBoardModal(false);
-  };
-
   const content = (
-    <div className={showBoardModal ? `modal-show modal` : `modal-hidden modal`}>
-      <div className="modal-content">
-        <button onClick={onCloseModalClicked}>Close</button>
-        <h1>Edit Board</h1>
-        <div className="form">
-          <form className="form" onSubmit={onSubmit}>
-            <label htmlFor="title">Title:</label>
+    <div className="container--modal">
+      <div className="modal" onClick={() => setIsOpen(false)}></div>
+      <div className="modal-content modal-content__form">
+        <div className="modal__header">
+          <h3 className="modal__title">Edit Note</h3>
+          <button
+            className="modal__btn--close"
+            onClick={() => {
+              setIsOpen(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
+        </div>
+
+        <form c className="modal__form" onSubmit={onSubmit}>
+          <div className="flex-col modal__form__container__input">
+            <div className="flex-row modal__form__container__input--label">
+              <label htmlFor="title" className="modal__form__label">
+                Title
+              </label>
+              <InfoIcon msg={'5 to 25 characters'} />
+            </div>
             <input
+              className="modal__form__input"
               id="title"
               name="title"
               type="text"
               autoComplete="off"
               value={title}
               onChange={onTitleChanged}
+              minLength="5"
+              maxLength="25"
             />
-            <label htmlFor="description">Description:</label>
-            <input
+          </div>
+          <div className="flex-col modal__form__container__input">
+            <div className="flex-row modal__form__container__input--label">
+              <label htmlFor="title" className="modal__form__label">
+                Description
+              </label>
+              <InfoIcon msg={'5 to 100 characters'} />
+            </div>
+            <textarea
+              className="modal__form__input"
               id="description"
               name="description"
-              type="textarea"
               autoComplete="off"
               value={description}
               onChange={onDescriptionChanged}
+              minLength="5"
+              maxLength="100"
             />
+          </div>
+          {board.private && (
+            <div className="flex-col modal__form__container__input">
+              <div className="flex-row modal__form__container__input--label">
+                <label htmlFor="oldPassword" className="modal__form__label">
+                  Old Password
+                </label>
+                <InfoIcon msg={'Leave blank to not change password'} />
+              </div>
+              <input
+                className="modal__form__input"
+                id="oldPassword"
+                name="oldPassword"
+                type="password"
+                autoComplete="off"
+                value={oldPassword}
+                placeholder="Leave blank to not change password"
+                onChange={onOldpasswordChanged}
+              />
+            </div>
+          )}
+          <div className="flex-col modal__form__container__input">
+            <div className="flex-row modal__form__container__input--label">
+              <label htmlFor="newPassword" className="modal__form__label">
+                New Password
+              </label>
+              <InfoIcon msg={newPasswordMessage} />
+            </div>
+            <input
+              className="modal__form__input"
+              id="newPassword"
+              name="newPassword"
+              type="password"
+              autoComplete="off"
+              value={newPassword}
+              maxLength="100"
+              placeholder={
+                'If changing password leave blank to set board as public'
+              }
+              onChange={onNewPasswordChanged}
+            />
+          </div>
+          <div className="flex-col modal__form__container__date">
+            <p className="modal__form__label">Start Date</p>{' '}
             <DatePicker
               onChange={setStartDate}
               value={startDate ? new Date(startDate) : null}
             />
+          </div>
+          <div className="flex-col modal__form__container__date">
+            <p className="modal__form__label">Start Date</p>
             <DatePicker
               onChange={setEndDate}
               value={endDate ? new Date(endDate) : null}
             />
-            <button className="icon-button" title="Save" disabled={isLoading}>
-              <FontAwesomeIcon icon={faSave} />
-            </button>
-          </form>
-        </div>
+          </div>
+          <button
+            className="btn--blue modal__form__btn"
+            title="Save"
+            disabled={isLoading}
+          >
+            Update
+          </button>
+        </form>
       </div>
     </div>
   );

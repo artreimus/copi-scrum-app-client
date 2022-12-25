@@ -13,7 +13,6 @@ import PersistLogin from './features/auth/PersistLogin';
 import RequireAuth from './features/auth/RequireAuth';
 import useTitle from './hooks/useTitle';
 import Missing from './components/Missing';
-import BoardPage from './features/boards/BoardPage';
 import NotePage from './features/notes/NotePage';
 import UserProfile from './features/user/UserProfile';
 import RequireNonAuth from './features/auth/RequireNonAuth';
@@ -23,6 +22,8 @@ import RequirePrivBoard from './features/auth/RequirePrivBoard';
 import RequirePubBoard from './features/auth/RequirePubBoard';
 import AuthLayout from './features/auth/AuthLayout';
 import ResetPassword from './features/auth/ResetPassword';
+import BoardPageNotes from './features/boards/BoardPageNotes';
+import BoardPageAbout from './features/boards/BoardPageAbout';
 
 function App() {
   useTitle('Copi');
@@ -49,7 +50,10 @@ function App() {
               <Route path="boards">
                 <Route index element={<BoardsList />} />
                 <Route element={<RequireAuth />}>
-                  <Route path=":id" element={<BoardPage />} />
+                  <Route path=":id">
+                    <Route index element={<BoardPageNotes />} />{' '}
+                    <Route path="about" element={<BoardPageAbout />} />
+                  </Route>
                 </Route>
                 <Route element={<RequireNonAuth />}>
                   <Route element={<RequirePrivBoard />}>

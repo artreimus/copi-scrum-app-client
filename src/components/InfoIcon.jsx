@@ -7,12 +7,7 @@ const InfoIcon = ({ msg }) => {
   const [isShown, setIsShown] = useState(false);
 
   return (
-    <div
-      className="info-icon"
-      // onMouseEnter={() => setIsShown(true)}
-      // onMouseLeave={() => setIsShown(false)}
-      onClick={() => setIsShown((prev) => !prev)}
-    >
+    <div className="info-icon" onClick={() => setIsShown((prev) => !prev)}>
       <FontAwesomeIcon icon={faCircleInfo} />
       {isShown && <div className="floating-menu">{msg}</div>}
     </div>

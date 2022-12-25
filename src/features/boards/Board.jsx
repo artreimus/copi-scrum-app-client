@@ -43,13 +43,6 @@ const Board = ({ boardId }) => {
       userId
     );
 
-    const adminsElement = admins.map((admin, index) => (
-      <p key={index}>{admin.username}</p>
-    ));
-    const usersElement = users.map((user, index) => (
-      <p key={index}>{user.username}</p>
-    ));
-
     const onDeleteBtnClick = async () => {
       await deleteBoard(boardId);
     };
@@ -68,7 +61,7 @@ const Board = ({ boardId }) => {
           >
             {isPrivate ? 'Private' : 'Public'}
           </p>
-          <p className="item__title board-item__title">{title}</p>
+          <p className="item__title board-item__title truncate-text">{title}</p>
           <p className="item__text board-item__text">{description}</p>
 
           <button

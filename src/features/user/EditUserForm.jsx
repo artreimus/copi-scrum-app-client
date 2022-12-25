@@ -86,7 +86,7 @@ const EditUserForm = ({ user }) => {
           <label htmlFor="username" className="user-profile__info__label">
             Username
           </label>
-          <InfoIcon msg={'3-20 characters and consist only of letters'} />
+          <InfoIcon msg={'3-30 characters and consist only of letters'} />
         </div>
         <input
           className="user-profile__info__input"
@@ -95,6 +95,8 @@ const EditUserForm = ({ user }) => {
           type="text"
           autoComplete="off"
           value={username}
+          minLength="3"
+          maxLength="30"
           onChange={onUsernameChanged}
         />
       </div>
@@ -137,7 +139,9 @@ const EditUserForm = ({ user }) => {
             New Password
           </label>
 
-          <InfoIcon msg={'4-12 characeters including !@#$%'} />
+          <InfoIcon
+            msg={'6-100 characters. Special characters !@#$% are allowed'}
+          />
         </div>
 
         <input
@@ -147,6 +151,8 @@ const EditUserForm = ({ user }) => {
           name="newPassword"
           value={newPassword}
           onChange={onNewPasswordChanged}
+          minLength={newPassword && 6}
+          maxLength="100"
         />
       </div>
 

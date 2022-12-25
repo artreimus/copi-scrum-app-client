@@ -52,8 +52,8 @@ const BoardsList = () => {
             </button>
           </div>
           <div className="boards-list__container">{boardsListItems}</div>
+          {isOpen && <NewBoardModal setIsOpen={setIsOpen} />}
         </section>
-        {isOpen && <NewBoardModal setIsOpen={setIsOpen} />}
       </>
     );
   }

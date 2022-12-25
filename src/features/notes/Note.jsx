@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGetNotesQuery } from './notesApiSlice';
 import { memo } from 'react';
 import { useDeleteNoteMutation } from './notesApiSlice';
+import formatDate from '../../utils/formatDate';
 
 const Note = ({ boardId, noteId }) => {
   const { note } = useGetNotesQuery(boardId, {
@@ -32,51 +33,36 @@ const Note = ({ boardId, noteId }) => {
     } = note;
 
     if (startDate) {
-      startDate = new Date(startDate).toLocaleString('en-US', {
-        day: 'numeric',
-        month: 'long',
-      });
+      startDate = formatDate(startDate);
     }
 
     if (endDate) {
-      endDate = new Date(endDate).toLocaleString('en-US', {
-        day: 'numeric',
-        month: 'long',
-      });
+      endDate = formatDate(endDate);
     }
 
-    const onNavigateBtnClick = () => navigate(`/dash/notes/${note._id}`);
-    const onDeleteBtnClick = async () => {
-      await deleteBoard(noteId);
-    };
+    const navigateToNotePage = () => navigate(`/dash/notes/${note._id}`);
 
-    const usersElement = users?.map((user, index) => <p key={index}>{user}</p>);
+    const usersElement = users?.map((user, index) => (
+      <p key={user._id} className="profile-tab__menu__btn center-all">
+        {user.username.charAt(0)}
+      </p>
+    ));
 
     return (
-      <div className="board">
-        <p>Title:{title}</p>
-        <p>text:{text}</p>
-        <p>Status:{status}</p>
-        <strong>Assigned Users:</strong>
-        {usersElement}
-        <p>Start Date:{startDate}</p>
-        <p>End Date:{endDate}</p>
-        <p>Creator: {noteCreator}</p>
-        <p>Board Id: {boardId}</p>
-        <button onClick={onNavigateBtnClick}>Navigate to Page</button>
-        <button onClick={onDeleteBtnClick}>Delete</button>
-        {/* <button
-          className="icon-button table__button"
-          onClick={onNavigateBtnClick}
-        >
-          <FontAwesomeIcon icon={faPenToSquare} />
-        </button>
-        <button
-          className="icon-button table__button"
-          onClick={onDeleteBtnClick}
-        >
-          DELETE
-        </button> */}
+      <div className="note-item" onClick={navigateToNotePage}>
+        <div className="note-item__content">
+          <p className="item__title truncate-text note-item__title">{title}</p>
+          <div>
+            <p className="item__text note-item__text">{text}</p>
+          </div>
+          <div className="note-item__container--grid">
+            <p className="note-item__date item__text">
+              {startDate && <span>{`${startDate} - `}</span>}
+              <span>{endDate ?? ''}</span>
+            </p>
+            <div className="note-item__container--users">{usersElement}</div>
+          </div>
+        </div>
       </div>
     );
   } else return null;

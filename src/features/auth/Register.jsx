@@ -101,7 +101,7 @@ const Register = () => {
           value={username}
           onChange={handleUserInput}
           autoComplete="off"
-          placeholder="3-20 characters and consist only of letters"
+          placeholder="3-30 characters and consist only of letters"
           required
         />
         <label htmlFor="password">Password</label>
@@ -110,7 +110,7 @@ const Register = () => {
           id="password"
           onChange={handlePwdInput}
           value={password}
-          placeholder="4-12 characeters including !@#$%"
+          placeholder="6-100 characeters. Special characters !@#$% are allowed"
           required
         />
         <label htmlFor="confirm-password">Confirm Password</label>
@@ -120,6 +120,8 @@ const Register = () => {
           onChange={handleConfirmPwdInput}
           value={confirmPassword}
           placeholder="confirm password"
+          minLength="6"
+          maxLength="100"
           required
         />
         <button className="btn--black" disabled={!canSave}>
