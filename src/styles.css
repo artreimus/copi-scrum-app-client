@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
+:root {
+  --grey: #313131;
+}
+
 html,
 body,
 div,
@@ -232,7 +236,7 @@ img {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.25px;
-  color: #313131;
+  color: var(--grey);
   margin: 0 auto;
   max-width: 200px;
   text-align: center;
@@ -350,8 +354,6 @@ img {
   width: 80%;
   padding: 20px;
   border-radius: 30px;
-  margin: 0 auto;
-  /* left: 50%; */
 }
 
 .modal-content__form {
@@ -427,7 +429,6 @@ img {
   font-size: 0.9rem;
   padding: 0.5rem 1.1rem;
   display: block;
-  margin: 0 auto;
 }
 
 .react-date-picker__wrapper {
@@ -667,7 +668,7 @@ img {
 }
 
 .dash-container {
-  height: 100vh;
+  min-height: 100vh;
   background-color: #f0f0f0;
 }
 
@@ -936,24 +937,32 @@ img {
   border-radius: 10px;
   background-color: #ffffff;
   padding: 1.2rem 2rem;
+  height: 150px;
+}
+
+.note-item__content {
+  height: 100%;
 }
 
 .note-item__container--grid {
   display: grid;
   grid-template-columns: 50% auto;
   column-gap: 5px;
+  margin-top: auto;
 }
 
 .note-item__title {
   margin-bottom: 0.5rem;
 }
 
-.note-item_-text {
-  margin-bottom: 0.25rem;
+.note-item__text {
+  margin-bottom: 0.4rem;
+  min-height: 51px;
 }
 
 .note-item__date {
   margin: auto 0;
+  font-size: 0.6rem;
 }
 
 .join-board {
@@ -996,6 +1005,80 @@ img {
   align-self: center;
 }
 
+.notes-list {
+  margin: 0 auto;
+  width: 90%;
+  max-width: 1300px;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(auto-fill, 300px);
+  gap: 1.5rem;
+}
+
+.notes-list__dropdown__container--header {
+  margin-bottom: 1rem;
+}
+
+.notes-list__dropdown__list > li {
+  margin-bottom: 0.75rem;
+}
+
+.notes-list__dropdown__title {
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--grey);
+}
+
+.btn--chevron {
+  margin-left: 0.6rem;
+  background-color: none;
+  border: none;
+}
+
+.notes-dropdown-enter {
+  transform: translateY(-50%);
+}
+
+.notes-dropdown-enter-active {
+  transform: translateY(0);
+  transition: all 100ms ease;
+}
+
+.notes-dropdown-exit {
+  transform: translateY(0);
+}
+
+.notes-dropdown-exit-active {
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: all 100ms ease;
+}
+
+.note-item__container--users {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 25px);
+  gap: 5px 3px;
+}
+
+.notes-list__dropdown__divider {
+  /* width: 100px; */
+  border-top: 2px solid black;
+}
+
+.note-item__user {
+  --size: 1.5rem;
+  font-size: 1.1rem;
+  text-align: center;
+  color: #ffffff;
+  background-color: aquamarine;
+  border-radius: 50%;
+  height: var(--size);
+  width: var(--size);
+  font-weight: 500;
+  border: none;
+}
 @media (min-width: 600px) {
   .display-lg--visible {
     display: none;

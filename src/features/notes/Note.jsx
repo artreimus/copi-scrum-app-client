@@ -1,5 +1,3 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { useGetNotesQuery } from './notesApiSlice';
 import { memo } from 'react';
@@ -42,19 +40,19 @@ const Note = ({ boardId, noteId }) => {
 
     const navigateToNotePage = () => navigate(`/dash/notes/${note._id}`);
 
-    const usersElement = users?.map((user, index) => (
-      <p key={user._id} className="profile-tab__menu__btn center-all">
+    const usersElement = users?.slice(0, 4).map((user, index) => (
+      <div key={user._id} className="note-item__user center-all">
         {user.username.charAt(0)}
-      </p>
+      </div>
     ));
 
     return (
-      <div className="note-item" onClick={navigateToNotePage}>
+      <li className="note-item" onClick={navigateToNotePage}>
         <div className="note-item__content">
           <p className="item__title truncate-text note-item__title">{title}</p>
-          <div>
-            <p className="item__text note-item__text">{text}</p>
-          </div>
+
+          <p className="item__text note-item__text">{text}</p>
+
           <div className="note-item__container--grid">
             <p className="note-item__date item__text">
               {startDate && <span>{`${startDate} - `}</span>}
@@ -63,7 +61,7 @@ const Note = ({ boardId, noteId }) => {
             <div className="note-item__container--users">{usersElement}</div>
           </div>
         </div>
-      </div>
+      </li>
     );
   } else return null;
 };

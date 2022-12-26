@@ -1,15 +1,9 @@
 import { useGetNotesQuery } from './notesApiSlice';
 import Note from './Note';
-import useAuth from '../../hooks/useAuth';
 import PulseLoader from 'react-spinners/PulseLoader';
-import useTitle from '../../hooks/useTitle';
-import NewNoteModal from './NewNoteModal';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import NotesListDropdown from './NotesListDropdown';
 
 const NotesList = ({ boardId, boardUsers }) => {
-  const [showNewNoteModal, setNewShowNoteModal] = useState(false);
-
   const { data, isLoading, isSuccess, isFetching, isError, error } =
     useGetNotesQuery(boardId, {
       // refetch options
@@ -17,10 +11,6 @@ const NotesList = ({ boardId, boardUsers }) => {
       refetchOnFocus: true,
       refetchOnMountOrArgChange: true,
     });
-
-  const onAddNoteBtnclicked = () => {
-    setNewShowNoteModal(true);
-  };
 
   let content = null;
 
@@ -31,16 +21,50 @@ const NotesList = ({ boardId, boardUsers }) => {
   }
 
   if (isSuccess) {
-    const { ids } = data;
-    const tableContent = ids?.length
-      ? ids.map((noteId) => (
-          <Note key={noteId} noteId={noteId} boardId={boardId} />
-        ))
-      : null;
+    const { ids, entities } = data;
+
+    const toDos = [];
+    const inProgress = [];
+    const testing = [];
+    const done = [];
+
+    ids?.forEach((noteId) => {
+      const note = entities[noteId];
+
+      const NoteElement = (
+        <Note key={note._id} noteId={note._id} boardId={boardId} />
+      );
+
+      switch (note.status) {
+        case 'To do':
+          toDos.push(NoteElement);
+          break;
+        case 'In Progress':
+          inProgress.push(NoteElement);
+          break;
+        case 'Testing':
+          testing.push(NoteElement);
+          break;
+        case 'Done':
+          done.push(NoteElement);
+          break;
+        default:
+          console.error('Invalid note status');
+      }
+    });
+
+    console.log(toDos);
 
     content = (
       <>
-        <div>{tableContent}</div>;
+        <div className="notes-list">
+          <NotesListDropdown title={'To Do'}>{toDos}</NotesListDropdown>
+          <NotesListDropdown title={'In Progress'}>
+            {inProgress}
+          </NotesListDropdown>
+          <NotesListDropdown title={'Testing'}>{testing}</NotesListDropdown>
+          <NotesListDropdown title={'Done'}>{done}</NotesListDropdown>
+        </div>
       </>
     );
   }
