@@ -16,12 +16,14 @@ const NotesListDropdown = ({ title, children }) => {
     <div className="notes-list__dropdown">
       <div className="flex-row notes-list__dropdown__container--header">
         <h3 className="notes-list__dropdown__title">{title}</h3>
-        <button
-          className="btn--chevron"
-          onClick={() => setIsOpen((prev) => !prev)}
-        >
-          <FontAwesomeIcon icon={isOpen ? faChevronDown : faChevronRight} />
-        </button>
+        {children.length > 0 && (
+          <button
+            className="btn--chevron"
+            onClick={() => setIsOpen((prev) => !prev)}
+          >
+            <FontAwesomeIcon icon={isOpen ? faChevronDown : faChevronRight} />
+          </button>
+        )}
       </div>
       <CSSTransition
         nodeRef={nodeRef}

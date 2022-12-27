@@ -43,13 +43,6 @@ const Board = ({ boardId }) => {
       userId
     );
 
-    const onDeleteBtnClick = async () => {
-      await deleteBoard(boardId);
-    };
-    const onUpdateBtnClick = async () => {
-      await updateBoard(boardId);
-    };
-
     const onNavigateBtnClick = () => navigate(`/dash/boards/${boardId}`);
 
     return (

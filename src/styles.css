@@ -1079,6 +1079,36 @@ img {
   font-weight: 500;
   border: none;
 }
+
+.welcome {
+  padding: 1rem;
+}
+
+.welcome-item {
+  background-color: #ffffff;
+  border-radius: 10px;
+  max-width: 800px;
+  padding: 2rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  margin: 0 auto;
+}
+
+.welcome-item__text {
+  margin-bottom: 1rem;
+}
+
+.welcome__btn {
+  font-size: 0.8rem;
+  padding: 0.5em 0.8em;
+}
+
+.welcome__btn + .welcome__btn {
+  margin-left: 0.55rem;
+}
+
 @media (min-width: 600px) {
   .display-lg--visible {
     display: none;
@@ -1108,6 +1138,10 @@ img {
   }
   .section__title {
     max-width: 300px;
+  }
+
+  .welcome__btn {
+    font-size: 0.9rem;
   }
 }
 
@@ -1265,5 +1299,9 @@ img {
 
   .article__about__container__text {
     margin: 0.5rem 0 0.8rem 0;
+  }
+
+  .welcome-item {
+    font-size: 1.1rem;
   }
 }
