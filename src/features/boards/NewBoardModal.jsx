@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-date-picker';
 import InfoIcon from '../../components/InfoIcon';
+import validateDates from '../../utils/validateDates';
 
 const NewBoardModal = ({ setIsOpen }) => {
   const [addNewBoard, { isLoading, isSuccess, isError, error }] =
@@ -23,7 +24,9 @@ const NewBoardModal = ({ setIsOpen }) => {
   const onPasswordChanged = (e) => setPassword(e.target.value);
 
   const canSave =
-    [title, description, startDate, endDate].every(Boolean) && !isLoading;
+    [title, description, startDate, endDate].every(Boolean) &&
+    !isLoading &&
+    validateDates(startDate, endDate);
 
   const onSubmit = async (e) => {
     console.log('submitted pls werk');

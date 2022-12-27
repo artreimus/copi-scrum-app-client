@@ -8,6 +8,7 @@ import { NOTE_STATUS } from '../../config/noteStatus';
 import DatePicker from 'react-date-picker';
 import verifyNoteStatus from '../../utils/verifyNoteStatus';
 import InfoIcon from '../../components/InfoIcon';
+import validateDates from '../../utils/validateDates';
 
 const UpdateNoteForm = ({ note, setIsOpen }) => {
   const [title, setTitle] = useState(note?.title);
@@ -202,7 +203,8 @@ const UpdateNoteForm = ({ note, setIsOpen }) => {
               title="Save"
               disabled={
                 !verifyNoteStatus({ status, startDate, endDate }) ||
-                isUpdateLoading
+                isUpdateLoading ||
+                !validateDates(startDate, endDate)
               }
             >
               Update
