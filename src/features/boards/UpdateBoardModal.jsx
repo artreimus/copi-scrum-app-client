@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-date-picker';
 import InfoIcon from '../../components/InfoIcon';
+import validateDates from '../../utils/validateDates';
 
 const UpdateBoardModal = ({ board, boardId, setIsOpen }) => {
   const [title, setTitle] = useState(board?.title);
@@ -15,8 +16,6 @@ const UpdateBoardModal = ({ board, boardId, setIsOpen }) => {
   const [startDate, setStartDate] = useState(board?.startDate);
   const [endDate, setEndDate] = useState(board?.endDate);
 
-  console.log(newPassword.length);
-
   const [updateBoard, { isSuccess, isLoading, isError, error }] =
     useUpdateBoardMutation();
 
@@ -24,6 +23,11 @@ const UpdateBoardModal = ({ board, boardId, setIsOpen }) => {
   const onDescriptionChanged = (e) => setDescription(e.target.value);
   const onOldpasswordChanged = (e) => setOldPassword(e.target.value);
   const onNewPasswordChanged = (e) => setNewPassword(e.target.value);
+
+  const canSave =
+    [title, description, startDate, endDate].every(Boolean) &&
+    !isLoading &&
+    validateDates(startDate, endDate);
 
   useEffect(() => {
     if (isSuccess) setIsOpen(false);
@@ -161,7 +165,7 @@ const UpdateBoardModal = ({ board, boardId, setIsOpen }) => {
           <button
             className="btn--blue modal__form__btn"
             title="Save"
-            disabled={isLoading}
+            disabled={!canSave}
           >
             Update
           </button>
