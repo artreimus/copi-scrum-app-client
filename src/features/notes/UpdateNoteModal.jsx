@@ -9,6 +9,8 @@ import DatePicker from 'react-date-picker';
 import verifyNoteStatus from '../../utils/verifyNoteStatus';
 import InfoIcon from '../../components/InfoIcon';
 import validateDates from '../../utils/validateDates';
+import useToggleModal from '../../hooks/useToggleModal';
+import ErrorModal from '../../components/ErrorModal';
 
 const UpdateNoteForm = ({ note, setIsOpen }) => {
   const [title, setTitle] = useState(note?.title);
@@ -30,15 +32,30 @@ const UpdateNoteForm = ({ note, setIsOpen }) => {
 
   const {
     data,
-    isLoading: isBoardLoading,
-    isSuccess: isBoardSuccess,
-    isError: isBoardError,
-    error: boardError,
+    isLoading: isGetBoardLoading,
+    isSuccess: isGetBoardSuccess,
+    isError: isGetBoardError,
+    error: getBoardError,
   } = useGetSingleBoardQuery(note.boardId);
 
-  useEffect(() => {
-    if (isUpdateSuccess) setIsOpen(false);
-  }, [isUpdateSuccess]);
+  const [isErrorUpdateOpen, setIsErrorUpdateOpen] =
+    useToggleModal(isUpdateError);
+
+  const [isErrorGetBoardOpen, setIsErrorGetBoardOpen] =
+    useToggleModal(isGetBoardError);
+
+  // useEffect(() => {
+  //   if (isUpdateSuccess) setIsOpen(false);
+  // }, [isUpdateSuccess]);
+
+  if (isGetBoardError && isErrorGetBoardOpen) {
+    return (
+      <ErrorModal
+        message={getBoardError?.data?.message}
+        setIsOpen={setIsErrorGetBoardOpen}
+      />
+    );
+  }
 
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onTextChanged = (e) => setText(e.target.value);
@@ -60,7 +77,9 @@ const UpdateNoteForm = ({ note, setIsOpen }) => {
     }
   };
 
-  if (isBoardSuccess) {
+  let content = null;
+
+  if (isGetBoardSuccess) {
     const options = [...data.board.users, ...data.board.admins].map((user) => ({
       value: user._id,
       label: user.username,
@@ -80,8 +99,14 @@ const UpdateNoteForm = ({ note, setIsOpen }) => {
 
     const statusDefaultValue = { value: status, label: status };
 
-    const content = (
+    content = (
       <div className="container--modal">
+        {isErrorUpdateOpen && (
+          <ErrorModal
+            message={updateError?.data?.message}
+            setIsOpen={setIsErrorUpdateOpen}
+          />
+        )}
         <div className="modal" onClick={() => setIsOpen(false)}></div>
         <div className="modal-content modal-content__form">
           <div className="modal__header">
@@ -213,9 +238,8 @@ const UpdateNoteForm = ({ note, setIsOpen }) => {
         </div>
       </div>
     );
-
-    return content;
   }
+  return content;
 };
 
 export default UpdateNoteForm;
