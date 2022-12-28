@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 
-const useToggleModal = (isError = false) => {
+const useToggleModal = (triggerChange = false) => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (isError) {
+    if (triggerChange) {
       setIsOpen(true);
     }
-  }, [isError]);
+  }, [triggerChange]);
 
   return [isOpen, setIsOpen];
 };
