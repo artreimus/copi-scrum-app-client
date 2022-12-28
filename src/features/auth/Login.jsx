@@ -30,10 +30,6 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
-    setErrorMsg('');
-  }, [credential, password]);
-
-  useEffect(() => {
     if (isSuccess) {
       navigate('/dash');
     }
@@ -54,7 +50,6 @@ const Login = () => {
       const { accessToken } = await login(userInfo).unwrap();
       dispatch(setCredentials({ accessToken }));
     } catch (err) {
-      console.log(err);
       if (!err.status) {
         setErrorMsg('No Server Response');
       } else if (err.status === 400) {
