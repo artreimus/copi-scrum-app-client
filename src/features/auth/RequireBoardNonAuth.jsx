@@ -5,34 +5,28 @@ import { useGetSingleBoardQuery } from '../boards/boardsApiSlice';
 import PulseLoader from 'react-spinners/PulseLoader';
 import setArrayIds from '../../utils/setArrayIds';
 
-const RequireAuth = () => {
+const RequireBoardNonAuth = () => {
   const location = useLocation();
   const { userId } = useAuth();
   const { id } = useParams();
 
   const { data, isSuccess, isLoading } = useGetSingleBoardQuery(id);
 
-  let content;
-
   if (isLoading) return <PulseLoader color="#FFF" />;
 
+  let content;
   if (isSuccess) {
-    const { admins, users, private: isPrivate } = data.board;
+    const { admins, users } = data.board;
     const normalizedAdmins = setArrayIds(admins);
     const normalizedUsers = setArrayIds(users);
 
     content =
-      normalizedAdmins.includes(userId) || normalizedUsers.includes(userId) ? (
+      !normalizedAdmins.includes(userId) &&
+      !normalizedUsers.includes(userId) ? (
         <Outlet />
-      ) : isPrivate ? (
-        <Navigate
-          to={`/dash/boards/${id}/join-private`}
-          state={{ from: location }}
-          replace
-        />
       ) : (
         <Navigate
-          to={`/dash/boards/${id}/join-public`}
+          to={`/dash/boards/${id}`}
           state={{ from: location }}
           replace
         />
@@ -42,4 +36,4 @@ const RequireAuth = () => {
   return content;
 };
 
-export default RequireAuth;
+export default RequireBoardNonAuth;

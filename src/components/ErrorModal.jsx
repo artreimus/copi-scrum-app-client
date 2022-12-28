@@ -3,9 +3,8 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 const ErrorModal = ({ message, setIsOpen }) => {
   return (
-    <div className="modal">
-      <div className="modal-bg" onClick={() => setIsOpen(false)}></div>
-      <div className="modal-content modal-error flex-row">
+    <div className="modal-error">
+      <div className="modal-error__content flex-row">
         <p className="modal-error__msg">{message}</p>
         <button
           className="modal-error__btn"

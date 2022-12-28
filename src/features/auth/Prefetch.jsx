@@ -1,5 +1,5 @@
 import { store } from '../../app/store';
-import { notesApiSlice } from '../notes/notesApiSlice';
+import { boardsApiSlice } from '../boards/boardsApiSlice';
 import { usersApiSlice } from '../user/usersApiSlice';
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
@@ -7,7 +7,12 @@ import { Outlet } from 'react-router-dom';
 const Prefetch = () => {
   useEffect(() => {
     store.dispatch(
-      usersApiSlice.util.prefetch('getUsers', 'usersList', { force: true })
+      boardsApiSlice.util.prefetch('getBoards', 'boardsList', { force: true })
+    );
+    store.dispatch(
+      usersApiSlice.util.prefetch('getUsers', 'updateBoardUsersModal', {
+        force: true,
+      })
     );
   }, []);
 

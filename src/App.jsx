@@ -10,12 +10,12 @@ import NotesList from './features/notes/NotesList';
 import EditUser from './features/user/EditUser';
 import Prefetch from './features/auth/Prefetch';
 import PersistLogin from './features/auth/PersistLogin';
-import RequireAuth from './features/auth/RequireAuth';
+import RequireBoardAuth from './features/auth/RequireBoardAuth';
 import useTitle from './hooks/useTitle';
 import Missing from './components/Missing';
 import NotePage from './features/notes/NotePage';
 import UserProfile from './features/user/UserProfile';
-import RequireNonAuth from './features/auth/RequireNonAuth';
+import RequireBoardNonAuth from './features/auth/RequireBoardNonAuth';
 import PrivateBoardAuth from './features/boards/PrivateBoardAuth';
 import PublicBoardAuth from './features/boards/PublicBoardAuth';
 import RequirePrivBoard from './features/auth/RequirePrivBoard';
@@ -24,6 +24,7 @@ import AuthLayout from './features/auth/AuthLayout';
 import ResetPassword from './features/auth/ResetPassword';
 import BoardPageNotes from './features/boards/BoardPageNotes';
 import BoardPageAbout from './features/boards/BoardPageAbout';
+import RequireUserAuth from './features/auth/RequireUserAuth';
 
 function App() {
   useTitle('Copi');
@@ -36,56 +37,55 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="reset-password" element={<ResetPassword />} />
+          {/*end public routes */}
         </Route>
-        {/* protected routes */}
         <Route element={<PersistLogin />}>
-          {/* <Route
-            element={<RequireAuth allowedRoles={[...Object.values(ROLES)]} />}
-          > */}
           <Route element={<Prefetch />}>
+            {/*start dash*/}
             <Route path="dash" element={<DashLayout />}>
               <Route index element={<Welcome />} />
-
+              {/* protected routes */}
               {/* boards routes */}
-              <Route path="boards">
-                <Route index element={<BoardsList />} />
-                <Route element={<RequireAuth />}>
-                  <Route path=":id">
-                    <Route index element={<BoardPageNotes />} />{' '}
-                    <Route path="about" element={<BoardPageAbout />} />
+              <Route element={<RequireUserAuth />}>
+                <Route path="boards">
+                  <Route index element={<BoardsList />} />
+                  <Route element={<RequireBoardAuth />}>
+                    <Route path=":id">
+                      <Route index element={<BoardPageNotes />} />
+                      <Route path="about" element={<BoardPageAbout />} />
+                    </Route>
+                  </Route>
+                  <Route element={<RequireBoardNonAuth />}>
+                    <Route element={<RequirePrivBoard />}>
+                      <Route
+                        path=":id/join-private"
+                        element={<PrivateBoardAuth />}
+                      />
+                    </Route>
+                    <Route element={<RequirePubBoard />}>
+                      <Route
+                        path=":id/join-public"
+                        element={<PublicBoardAuth />}
+                      />
+                    </Route>
                   </Route>
                 </Route>
-                <Route element={<RequireNonAuth />}>
-                  <Route element={<RequirePrivBoard />}>
-                    <Route
-                      path=":id/join-private"
-                      element={<PrivateBoardAuth />}
-                    />
-                  </Route>
-                  <Route element={<RequirePubBoard />}>
-                    <Route
-                      path=":id/join-public"
-                      element={<PublicBoardAuth />}
-                    />
-                  </Route>
+                {/* user routes */}
+                <Route path="user">
+                  <Route index element={<UserProfile />} />
+                  <Route path=":id" element={<EditUser />} />
                 </Route>
-              </Route>
-              {/* user routes */}
-              <Route path="user">
-                <Route index element={<UserProfile />} />
-                <Route path=":id" element={<EditUser />} />
-              </Route>
 
-              {/* note routes */}
-              <Route path="notes">
-                <Route index element={<NotesList />} />
-                <Route path=":id" element={<NotePage />} />
+                {/* note routes */}
+                <Route path="notes">
+                  <Route index element={<NotesList />} />
+                  <Route path=":id" element={<NotePage />} />
+                </Route>
               </Route>
+              {/*end protected routes*/}
               {/*end dash*/}
             </Route>
-            {/*end protected routes*/}
           </Route>
-          {/* </Route> */}
         </Route>
         <Route path="*" element={<Missing />}></Route>
       </Route>

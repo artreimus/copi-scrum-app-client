@@ -1,10 +1,9 @@
-import { Outlet, Link, Navigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useRefreshMutation } from './authApiSlice';
 import usePersist from '../../hooks/usePersist';
 import { useSelector } from 'react-redux';
 import { selectCurrentToken } from './authSlice';
-import { useNavigate } from 'react-router-dom';
 import PulseLoader from 'react-spinners/PulseLoader';
 
 const PersistLogin = () => {
@@ -12,7 +11,6 @@ const PersistLogin = () => {
   const token = useSelector(selectCurrentToken);
   const effectRan = useRef(false);
 
-  const navigate = useNavigate();
   const [trueSuccess, setTrueSuccess] = useState(false);
 
   const [refresh, { isUninitialized, isLoading, isSuccess, isError, error }] =
@@ -21,12 +19,9 @@ const PersistLogin = () => {
   useEffect(() => {
     if (effectRan.current === true || process.env.NODE_ENV !== 'development') {
       // React 18 Strict Mode
-
       const verifyRefreshToken = async () => {
         try {
-          //const response =
           await refresh();
-          //const { accessToken } = response.data
           setTrueSuccess(true);
         } catch (err) {
           console.error(err);
@@ -49,19 +44,14 @@ const PersistLogin = () => {
     //persist: yes, token: no
     content = <PulseLoader color={'#FFF'} />;
   } else if (isError) {
-    //persist: yes, token: no
-    content = (
-      <p className="errmsg">
-        {`${error?.data?.message} - `}{' '}
-        <Link to="/login">Please login again</Link>.
-      </p>
-    );
+    // persist: yes, token: no
+    // will navigate back to login page
+    content = <Outlet />;
   } else if (isSuccess && trueSuccess) {
     //persist: yes, token: yes
     content = <Outlet />;
   } else if (token && isUninitialized) {
     //persist: yes, token: yes
-
     content = <Outlet />;
   }
 

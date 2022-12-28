@@ -11,10 +11,14 @@ const HomePage = () => {
   const onSignupBtnClicked = () => {
     navigate('./register');
   };
+
   const onLoginBtnClicked = () => {
     navigate('./login');
   };
 
+  const onGoToAppBtnClicked = () => {
+    navigate('./dash');
+  };
   const content = (
     <>
       <header className="home-header">
@@ -40,7 +44,12 @@ const HomePage = () => {
             The scrum app that can help your team be more organized and
             efficient
           </p>
-          <button className="home-main__btn--blue btn--blue ">Go to App</button>
+          <button
+            className="home-main__btn--blue btn--blue"
+            onClick={onGoToAppBtnClicked}
+          >
+            Go to App
+          </button>
         </div>
         <div className="flex-col home-main__container--secondary">
           <div className="container--image display-lg--visible">

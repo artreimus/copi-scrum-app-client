@@ -1,34 +1,22 @@
 import { useNavigate } from 'react-router-dom';
 import { useGetNotesQuery } from './notesApiSlice';
 import { memo } from 'react';
-import { useDeleteNoteMutation } from './notesApiSlice';
 import formatDate from '../../utils/formatDate';
 
 const Note = ({ boardId, noteId }) => {
-  const { note } = useGetNotesQuery(boardId, {
-    selectFromResult: ({ data }) => ({
+  const { note, isSuccess } = useGetNotesQuery(boardId, {
+    selectFromResult: ({ data, isSuccess }) => ({
       note: data?.entities[noteId],
+      isSuccess,
     }),
   });
 
-  const [
-    deleteBoard,
-    { isSuccess: isDelSuccess, isError: isDelError, error: delError },
-  ] = useDeleteNoteMutation();
-
   const navigate = useNavigate();
 
-  if (note) {
-    let {
-      title,
-      text,
-      users,
-      startDate,
-      endDate,
-      noteCreator,
-      status,
-      boardId,
-    } = note;
+  let content = null;
+
+  if (isSuccess) {
+    let { title, text, users, startDate, endDate } = note;
 
     if (startDate) {
       startDate = formatDate(startDate);
@@ -46,7 +34,7 @@ const Note = ({ boardId, noteId }) => {
       </div>
     ));
 
-    return (
+    content = (
       <li className="note-item" onClick={navigateToNotePage}>
         <div className="note-item__content">
           <p className="item__title truncate-text note-item__title">{title}</p>
@@ -63,7 +51,9 @@ const Note = ({ boardId, noteId }) => {
         </div>
       </li>
     );
-  } else return null;
+  }
+
+  return content;
 };
 
 export default memo(Note);

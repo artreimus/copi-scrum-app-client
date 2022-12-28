@@ -1,41 +1,24 @@
 import React from 'react';
-import {
-  useGetBoardsQuery,
-  useDeleteBoardMutation,
-  useUpdateBoardMutation,
-} from './boardsApiSlice';
+import { useGetBoardsQuery } from './boardsApiSlice';
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { memo } from 'react';
 import useAuth from '../../hooks/useAuth';
 import setArrayIds from '../../utils/setArrayIds';
 
 const Board = ({ boardId }) => {
   const { userId } = useAuth();
-  const { board } = useGetBoardsQuery('boardsList', {
-    selectFromResult: ({ data, isSuccess, isFetching }) => ({
+  const { board, isSuccess } = useGetBoardsQuery('boardsList', {
+    selectFromResult: ({ data, isSuccess }) => ({
       board: data?.entities[boardId],
+      isSuccess,
     }),
   });
 
-  const [
-    deleteBoard,
-    { isSuccess: isDelSuccess, isError: isDelError, error: delError },
-  ] = useDeleteBoardMutation();
-
   const navigate = useNavigate();
+  let content = null;
 
-  if (board) {
-    let {
-      title,
-      description,
-      admins,
-      users,
-      startDate,
-      endDate,
-      private: isPrivate,
-    } = board;
+  if (isSuccess) {
+    let { title, description, admins, users, private: isPrivate } = board;
 
     const normalizedUsersIds = setArrayIds(users);
     const normalizedAdminsIds = setArrayIds(admins);
@@ -45,7 +28,7 @@ const Board = ({ boardId }) => {
 
     const onNavigateBtnClick = () => navigate(`/dash/boards/${boardId}`);
 
-    return (
+    content = (
       <div className="board-item ">
         <div className="board-item__content flex-col">
           <p
@@ -67,7 +50,8 @@ const Board = ({ boardId }) => {
         </div>
       </div>
     );
-  } else return null;
+  }
+  return content;
 };
 
 export default memo(Board);
