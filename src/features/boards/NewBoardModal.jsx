@@ -8,19 +8,15 @@ import InfoIcon from '../../components/InfoIcon';
 import validateDates from '../../utils/validateDates';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
-import { useEffect } from 'react';
 
 const NewBoardModal = ({ setIsOpen }) => {
+  const [errorMsg, setErrorMsg] = useState('');
+
   const navigate = useNavigate();
 
-  const [addNewBoard, { isLoading, isSuccess, isError, error }] =
-    useAddNewBoardMutation();
+  const [addNewBoard, { isLoading }] = useAddNewBoardMutation();
 
-  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
-
-  useEffect(() => {
-    if (isSuccess) setIsOpen(false);
-  }, [isSuccess]);
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -40,17 +36,28 @@ const NewBoardModal = ({ setIsOpen }) => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (canSave) {
-      const newBoard = { title, description, startDate, endDate };
-      if (password) newBoard.password = password;
-      const result = await addNewBoard(newBoard);
-      navigate(`/dash/boards/${result.data.board._id}`);
+      try {
+        const newBoard = { title, description, startDate, endDate };
+        if (password) newBoard.password = password;
+        const result = await addNewBoard(newBoard).unwrap();
+        navigate(`/dash/boards/${result.board._id}`);
+      } catch (err) {
+        if (!err.status) {
+          setErrorMsg('No Server Response');
+        } else if (err.status === 400) {
+          setErrorMsg('Invalid credentials');
+        } else if (err.status === 401) {
+          setErrorMsg('Unauthorized');
+        }
+        setIsErrorOpen(true);
+      }
     }
   };
 
   return (
     <div className="container--modal">
       {isErrorOpen && (
-        <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+        <ErrorModal message={errorMsg} setIsOpen={setIsErrorOpen} />
       )}
       <div className="modal" onClick={() => setIsOpen(false)}></div>
       <div className="modal-content modal-content__form">

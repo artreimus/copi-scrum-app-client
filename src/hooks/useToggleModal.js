@@ -6,6 +6,8 @@ const useToggleModal = (triggerChange = false) => {
   useEffect(() => {
     if (triggerChange) {
       setIsOpen(true);
+    } else {
+      setIsOpen(false);
     }
   }, [triggerChange]);
 

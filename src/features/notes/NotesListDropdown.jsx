@@ -8,7 +8,7 @@ import {
 import useWindowSize from '../../hooks/useWindowSize';
 
 const NotesListDropdown = ({ title, children }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const windowSize = useWindowSize();
   const nodeRef = useRef(null);
 
