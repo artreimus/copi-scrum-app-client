@@ -3,13 +3,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { useLeaveBoardMutation } from './boardsApiSlice';
-import useAuth from '../../hooks/useAuth';
+import useToggleModal from '../../hooks/useToggleModal';
+import ErrorModal from '../../components/ErrorModal';
 
 const LeaveBoardModal = ({ boardId, setIsOpen, boardUsers }) => {
+  const navigate = useNavigate();
+
   const [leaveBoard, { isSuccess, isLoading, isError, error }] =
     useLeaveBoardMutation();
-  const { userId } = useAuth();
-  const navigate = useNavigate();
+
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
   useEffect(() => {
     if (isSuccess) navigate('/dash/boards');
@@ -23,6 +26,9 @@ const LeaveBoardModal = ({ boardId, setIsOpen, boardUsers }) => {
 
   const content = (
     <div className="container--modal">
+      {isErrorOpen && (
+        <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+      )}
       <div className="modal" onClick={() => setIsOpen(false)}></div>
       <div className="modal-content modal-content__form">
         <div className="modal__header">
@@ -45,7 +51,7 @@ const LeaveBoardModal = ({ boardId, setIsOpen, boardUsers }) => {
             onClick={onLeaveBtnClicked}
             disabled={isLoading}
           >
-            Delete
+            Leave
           </button>
           <button
             className="btn--blue modal__btn--prompt"

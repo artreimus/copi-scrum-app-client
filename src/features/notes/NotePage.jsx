@@ -1,12 +1,13 @@
 import { useParams } from 'react-router-dom';
 import { useGetSingleNoteQuery } from './notesApiSlice';
 import PulseLoader from 'react-spinners/PulseLoader';
-import UpdateNoteForm from './UpdateNoteForm';
+import UpdateNoteForm from './UpdateNoteModal';
 import formatDate from '../../utils/formatDate';
 import useToggleModal from '../../hooks/useToggleModal';
 import useWindowSize from '../../hooks/useWindowSize';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
+import ErrorModal from '../../components/ErrorModal';
 
 const NotePage = () => {
   const { id: noteId } = useParams();
@@ -24,8 +25,14 @@ const NotePage = () => {
     }
   );
 
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
+
   if (isLoading) return <PulseLoader color={'#FFF'} />;
-  if (isError) return <p className="errMsg">{error?.data?.message}</p>;
+
+  if (isError && isErrorOpen)
+    return (
+      <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+    );
 
   if (isSuccess) {
     const { note } = data;

@@ -19,8 +19,8 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [persist, setPersist] = usePersist();
 
-  const [login, { isLoading, isSuccess, isError, error }] = useLoginMutation();
-  const [isOpen, setIsOpen] = useToggleModal(isError);
+  const [login, { isLoading, isSuccess }] = useLoginMutation();
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -54,13 +54,17 @@ const Login = () => {
       const { accessToken } = await login(userInfo).unwrap();
       dispatch(setCredentials({ accessToken }));
     } catch (err) {
+      console.log(err);
       if (!err.status) {
         setErrorMsg('No Server Response');
       } else if (err.status === 400) {
+        // Initialliy returns a 403 then undergoes refresh token which
+        // returns 400 if it fails
         setErrorMsg('Invalid credentials');
       } else if (err.status === 401) {
         setErrorMsg('Unauthorized');
       }
+      setIsErrorOpen(true);
     }
   };
 
@@ -71,8 +75,8 @@ const Login = () => {
   if (isLoading) return <PulseLoader color={'#FFF'} />;
   return (
     <section className="auth-section__form">
-      {isOpen && (
-        <ErrorModal message={error.data.message} setIsOpen={setIsOpen} />
+      {isErrorOpen && (
+        <ErrorModal message={errorMsg} setIsOpen={setIsErrorOpen} />
       )}
       <h2 className="auth-form__title">Login</h2>
       <form className="auth-form flex-col" onSubmit={handleSubmit}>
@@ -84,6 +88,7 @@ const Login = () => {
           ref={userRef}
           value={credential}
           onChange={handleUserInput}
+          placeholder="username or email"
           autoComplete="off"
           required
         />
@@ -94,6 +99,7 @@ const Login = () => {
           id="password"
           onChange={handlePwdInput}
           value={password}
+          autoComplete="off"
           required
         />
         <div>

@@ -2,6 +2,8 @@ import { useGetNotesQuery } from './notesApiSlice';
 import Note from './Note';
 import PulseLoader from 'react-spinners/PulseLoader';
 import NotesListDropdown from './NotesListDropdown';
+import useToggleModal from '../../hooks/useToggleModal';
+import ErrorModal from '../../components/ErrorModal';
 
 const NotesList = ({ boardId, boardUsers }) => {
   const { data, isLoading, isSuccess, isFetching, isError, error } =
@@ -12,13 +14,16 @@ const NotesList = ({ boardId, boardUsers }) => {
       refetchOnMountOrArgChange: true,
     });
 
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
+
+  if (isLoading) return <PulseLoader color={'#FFF'} />;
+
+  if (isError && isErrorOpen)
+    return (
+      <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+    );
+
   let content = null;
-
-  if (isLoading) content = <PulseLoader color={'#FFF'} />;
-
-  if (isError) {
-    content = <p className="errmsg">{error?.data?.message}</p>;
-  }
 
   if (isSuccess) {
     const { ids, entities } = data;

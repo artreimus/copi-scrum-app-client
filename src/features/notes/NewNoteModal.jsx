@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import Select from 'react-select';
 import InfoIcon from '../../components/InfoIcon';
+import useToggleModal from '../../hooks/useToggleModal';
+import ErrorModal from '../../components/ErrorModal';
 
 const NewNoteModal = ({ boardId, boardUsers, setIsOpen }) => {
   const [title, setTitle] = useState('');
@@ -14,14 +16,14 @@ const NewNoteModal = ({ boardId, boardUsers, setIsOpen }) => {
   const [addNewNote, { isLoading, isSuccess, isError, error }] =
     useAddNewNoteMutation();
 
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
+
   useEffect(() => {
     if (isSuccess) {
       setTitle('');
       setText('');
     }
   }, [isSuccess]);
-
-  console.log(boardUsers);
 
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onTextChanged = (e) => setText(e.target.value);
@@ -49,6 +51,9 @@ const NewNoteModal = ({ boardId, boardUsers, setIsOpen }) => {
 
   const content = (
     <div className="container--modal">
+      {isErrorOpen && (
+        <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+      )}
       <div className="modal" onClick={() => setIsOpen(false)}></div>
       <div className="modal-content modal-content__form">
         <div className="modal__header">

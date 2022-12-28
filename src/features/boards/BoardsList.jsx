@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import useWindowSize from '../../hooks/useWindowSize';
 import useToggleModal from '../../hooks/useToggleModal';
+import ErrorModal from '../../components/ErrorModal';
 
 const BoardsList = () => {
   useTitle('Copi');
@@ -22,14 +23,20 @@ const BoardsList = () => {
     isFetching,
   } = useGetBoardsQuery('boardsList', {
     // refetch options
-    // pollingInterval: 60000,
-    // refetchOnFocus: true,
+    pollingInterval: 60000,
+    refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
 
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
+
   let content = null;
   if (isLoading) return <PulseLoader color={'#FFF'} />;
-  if (isError) return <NewBoardModal />;
+
+  if (isError && isErrorOpen)
+    return (
+      <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+    );
 
   if (isSuccess && !isFetching) {
     const { ids } = boards;

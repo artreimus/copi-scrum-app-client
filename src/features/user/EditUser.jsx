@@ -3,6 +3,8 @@ import EditUserForm from './EditUserForm';
 import { useGetUsersQuery } from './usersApiSlice';
 import PulseLoader from 'react-spinners/PulseLoader';
 import useTitle from '../../hooks/useTitle';
+import useToggleModal from '../../hooks/useToggleModal';
+import ErrorModal from '../../components/ErrorModal';
 
 const EditUser = () => {
   useTitle('Copi');
@@ -20,17 +22,26 @@ const EditUser = () => {
     }
   );
 
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
   if (isLoading) return <PulseLoader color={'#FFF'} />;
 
-  if (isError) {
-    return <p className="errmsg">{error.data.message}</p>;
+  if (isError && isErrorOpen) {
+    return (
+      <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+    );
   }
 
-  return (
-    <section className="user-profile center-all">
-      {isSuccess ? <EditUserForm user={user} /> : null}
-    </section>
-  );
+  let content = null;
+
+  if (isSuccess) {
+    content = (
+      <section className="user-profile center-all">
+        <EditUserForm user={user} />
+      </section>
+    );
+  }
+
+  return content;
 };
 
 export default EditUser;

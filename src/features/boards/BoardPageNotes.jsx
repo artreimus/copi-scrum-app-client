@@ -11,6 +11,7 @@ import formatDate from '../../utils/formatDate';
 import authorizeUser from '../../utils/authorizeUser';
 import useToggleModal from '../../hooks/useToggleModal';
 import NewNoteModal from '../notes/NewNoteModal';
+import ErrorModal from '../../components/ErrorModal';
 
 const BoardPageNotes = () => {
   const [isUserAdmin, setIsUserAdmin] = useState(false);
@@ -27,6 +28,8 @@ const BoardPageNotes = () => {
       refetchOnMountOrArgChange: true,
     });
 
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
+
   useEffect(() => {
     let { admins } = data.board;
     if (isSuccess) {
@@ -40,7 +43,11 @@ const BoardPageNotes = () => {
   }, [isSuccess, isFetching]);
 
   if (isLoading) return <PulseLoader color={'#FFF'} />;
-  if (isError) return <p>error</p>;
+
+  if (isError && isErrorOpen)
+    return (
+      <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+    );
 
   let content = null;
 
@@ -55,8 +62,6 @@ const BoardPageNotes = () => {
     if (endDate) {
       endDate = formatDate(endDate);
     }
-
-    console.log(users);
 
     content = (
       <>

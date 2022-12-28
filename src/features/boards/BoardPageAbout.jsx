@@ -11,6 +11,7 @@ import { useGetSingleBoardQuery } from './boardsApiSlice';
 import UpdateBoardModal from './UpdateBoardModal';
 import BoardPageHeader from './BoardPageHeader';
 import DeleteBoardModal from './DeleteBoardModal';
+import ErrorModal from '../../components/ErrorModal';
 
 const BoardPageAbout = () => {
   const [isUserAdmin, setIsUserAdmin] = useState(false);
@@ -20,16 +21,24 @@ const BoardPageAbout = () => {
   const windowSize = useWindowSize();
 
   const { id: boardId } = useParams();
-  const { data, isLoading, isSuccess, isError, error } = useGetSingleBoardQuery(
-    boardId,
-    'boardPage',
-    {
-      // refetch options
-      pollingInterval: 60000,
-      refetchOnFocus: true,
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  const {
+    data,
+    isLoading,
+    isSuccess,
+
+    isError,
+    error,
+  } = useGetSingleBoardQuery(boardId, 'boardPage', {
+    // refetch options
+    pollingInterval: 60000,
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
+
+  // const error = { data: { message: 'testing error msg' } };
+  // const isError = true;
+
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
   useEffect(() => {
     let { admins } = data.board;
@@ -44,7 +53,10 @@ const BoardPageAbout = () => {
   }, [isSuccess]);
 
   if (isLoading) return <PulseLoader color={'#FFF'} />;
-  if (isError) return <p>error</p>;
+  if (isError && isErrorOpen)
+    return (
+      <ErrorModal message={error.data.message} setIsOpen={setIsErrorOpen} />
+    );
 
   let content = null;
 
@@ -88,6 +100,12 @@ const BoardPageAbout = () => {
           users={users}
         />
 
+        {isErrorOpen && (
+          <ErrorModal
+            message={error?.data?.message}
+            setIsOpen={setIsErrorOpen}
+          />
+        )}
         <section section className="board-page">
           <div className="section__header section__header__board-page__about flex-row">
             {isUserAdmin && (

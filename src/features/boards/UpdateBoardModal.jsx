@@ -5,6 +5,8 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-date-picker';
 import InfoIcon from '../../components/InfoIcon';
 import validateDates from '../../utils/validateDates';
+import useToggleModal from '../../hooks/useToggleModal';
+import ErrorModal from '../../components/ErrorModal';
 
 const UpdateBoardModal = ({ board, boardId, setIsOpen }) => {
   const [title, setTitle] = useState(board?.title);
@@ -18,6 +20,8 @@ const UpdateBoardModal = ({ board, boardId, setIsOpen }) => {
 
   const [updateBoard, { isSuccess, isLoading, isError, error }] =
     useUpdateBoardMutation();
+
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onDescriptionChanged = (e) => setDescription(e.target.value);
@@ -55,6 +59,9 @@ const UpdateBoardModal = ({ board, boardId, setIsOpen }) => {
 
   const content = (
     <div className="container--modal">
+      {isErrorOpen && (
+        <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+      )}
       <div className="modal" onClick={() => setIsOpen(false)}></div>
       <div className="modal-content modal-content__form">
         <div className="modal__header">

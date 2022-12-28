@@ -3,10 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useDeleteBoardMutation } from './boardsApiSlice';
 import { useNavigate } from 'react-router-dom';
+import useToggleModal from '../../hooks/useToggleModal';
+import ErrorModal from '../../components/ErrorModal';
 
 const DeleteBoardModal = ({ boardId, setIsOpen }) => {
   const [deleteBoard, { isSuccess, isLoading, isError, error }] =
     useDeleteBoardMutation();
+
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
   const navigate = useNavigate();
 
@@ -20,6 +24,9 @@ const DeleteBoardModal = ({ boardId, setIsOpen }) => {
 
   const content = (
     <div className="container--modal">
+      {isErrorOpen && (
+        <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+      )}
       <div className="modal" onClick={() => setIsOpen(false)}></div>
       <div className="modal-content modal-content__form">
         <div className="modal__header">

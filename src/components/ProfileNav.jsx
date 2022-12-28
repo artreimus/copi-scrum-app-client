@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useSendLogoutMutation } from '../features/auth/authApiSlice';
 import { useEffect, useState } from 'react';
 import useAuth from '../hooks/useAuth';
+import ErrorModal from './ErrorModal';
+import useToggleModal from '../hooks/useToggleModal';
 
 const ProfileNav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,8 +12,10 @@ const ProfileNav = () => {
 
   const navigate = useNavigate();
 
-  const [sendLogout, { isLoading, isSuccess, isError, error }] =
+  const [sendLogout, { isLoading, isSuccess, isError }] =
     useSendLogoutMutation();
+
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
   useEffect(() => {
     if (isSuccess) {
@@ -23,6 +27,9 @@ const ProfileNav = () => {
 
   return (
     <>
+      {isErrorOpen && (
+        <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+      )}
       <div
         className={isMenuOpen ? 'menu-bg' : 'menu-bg hidden'}
         onClick={() => setIsMenuOpen(false)}

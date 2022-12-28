@@ -5,6 +5,8 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import Select from 'react-select';
 import setArrayIds from '../../utils/setArrayIds';
 import InfoIcon from '../../components/InfoIcon';
+import useToggleModal from '../../hooks/useToggleModal';
+import ErrorModal from '../../components/ErrorModal';
 
 const UpdateBoardAdminsModal = ({
   boardAdmins,
@@ -16,6 +18,8 @@ const UpdateBoardAdminsModal = ({
 
   const [updateAdmins, { isSuccess, isLoading, isError, error }] =
     useUpdateBoardAdminsMutation();
+
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
   const onSelectChange = (choices) => {
     setAdmins(() => {
@@ -52,12 +56,11 @@ const UpdateBoardAdminsModal = ({
     }
   });
 
-  const onCloseModalClicked = () => {
-    setShowAdminModal(false);
-  };
-
   const content = (
     <div className="container--modal">
+      {isErrorOpen && (
+        <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+      )}
       <div className="modal" onClick={() => setIsOpen(false)}></div>
       <div className="modal-content modal-content__form">
         <div className="modal__header">

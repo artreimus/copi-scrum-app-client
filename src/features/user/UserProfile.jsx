@@ -1,19 +1,26 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useGetSingleUserQuery } from './usersApiSlice';
 import { memo } from 'react';
 import PulseLoader from 'react-spinners/PulseLoader';
 import useAuth from '../../hooks/useAuth';
+import useToggleModal from '../../hooks/useToggleModal';
+import ErrorModal from '../../components/ErrorModal';
 
 const UserProfile = () => {
   const { userId } = useAuth();
+  const navigate = useNavigate();
 
   const { data, isLoading, isSuccess, isError, error } =
     useGetSingleUserQuery(userId);
 
-  const navigate = useNavigate();
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
+
   const onNavigateBtnClick = () => navigate(`/dash/user/${userId}`);
+
+  if (isError && isErrorOpen)
+    return (
+      <ErrorModal message={error.data.message} setIsOpen={setIsErrorOpen} />
+    );
 
   if (isLoading) return <PulseLoader color="#FFF" />;
 

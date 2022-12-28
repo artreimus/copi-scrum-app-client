@@ -1,8 +1,10 @@
 import React from 'react';
 import { useState } from 'react';
 import { useAccessBoardMutation } from './boardsApiSlice';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
+import useToggleModal from '../../hooks/useToggleModal';
+import ErrorModal from '../../components/ErrorModal';
 
 const PrivateBoardAuth = () => {
   const [password, setPassword] = useState('');
@@ -11,6 +13,8 @@ const PrivateBoardAuth = () => {
 
   const [accessBoard, { isSuccess, isLoading, isError, error }] =
     useAccessBoardMutation();
+
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
   const onPasswordChanged = (e) => setPassword(e.target.value);
 
@@ -21,6 +25,9 @@ const PrivateBoardAuth = () => {
 
   return (
     <section className="center-all join-board">
+      {isErrorOpen && (
+        <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+      )}
       <article className="article--white join-board__article center-all">
         <h2 className="article__about__title">Join Board</h2>
         <p className="join-board__article__text">
@@ -40,6 +47,7 @@ const PrivateBoardAuth = () => {
               type="password"
               value={password}
               onChange={onPasswordChanged}
+              placeholder="board password"
               required
             />
           </div>

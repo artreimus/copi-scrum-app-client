@@ -7,6 +7,8 @@ import useTitle from '../../hooks/useTitle';
 import useValidateUsername from '../../hooks/useValidateUsername';
 import useValidateEmail from '../../hooks/useValidateEmail';
 import useValidatePassword from '../../hooks/useValidatePassword';
+import ErrorModal from '../../components/ErrorModal';
+import useToggleModal from '../../hooks/useToggleModal';
 
 const Register = () => {
   useTitle('Copi');
@@ -25,6 +27,8 @@ const Register = () => {
 
   const [register, { isSuccess, isLoading, isError, error }] =
     useRegisterMutation();
+
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,13 +59,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (canSave) {
-      try {
-        // unwrap to use trycatch instead of using rtk's error/isError
-        await register({ username, email, password }).unwrap();
-      } catch (err) {
-        setErrorMsg('Unauthorized');
-        errRef.current.focus();
-      }
+      await register({ username, email, password });
     }
   };
 
@@ -70,20 +68,21 @@ const Register = () => {
   const handlePwdInput = (e) => setPassword(e.target.value);
   const handleConfirmPwdInput = (e) => setConfirmPassword(e.target.value);
 
-  const errorClass = errorMsg ? 'show' : 'hidden';
-
   if (isLoading) return <PulseLoader color={'#FFF'} />;
 
   return (
     <section className="auth-section__form">
-      <p ref={errRef} className={errorClass} aria-live="assertive">
-        {errorMsg}
-      </p>
+      {isErrorOpen && (
+        <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+      )}
       <h2 className="auth-form__title">Register</h2>
       <form className="auth-form flex-col" onSubmit={handleSubmit}>
         <label htmlFor="email">Email</label>
         <input
-          type="text"
+          style={{
+            borderColor: !email ? 'black ' : validEmail ? 'black' : 'red',
+          }}
+          type="email"
           id="email"
           name="email"
           ref={emailRef}
@@ -101,6 +100,8 @@ const Register = () => {
           value={username}
           onChange={handleUserInput}
           autoComplete="off"
+          minLength="3"
+          maxLength="30"
           placeholder="3-30 characters and consist only of letters"
           required
         />
@@ -110,6 +111,8 @@ const Register = () => {
           id="password"
           onChange={handlePwdInput}
           value={password}
+          minLength="6"
+          maxLength="100"
           placeholder="6-100 characeters. Special characters !@#$% are allowed"
           required
         />

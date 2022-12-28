@@ -6,12 +6,21 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-date-picker';
 import InfoIcon from '../../components/InfoIcon';
 import validateDates from '../../utils/validateDates';
+import useToggleModal from '../../hooks/useToggleModal';
+import ErrorModal from '../../components/ErrorModal';
+import { useEffect } from 'react';
 
 const NewBoardModal = ({ setIsOpen }) => {
+  const navigate = useNavigate();
+
   const [addNewBoard, { isLoading, isSuccess, isError, error }] =
     useAddNewBoardMutation();
 
-  const navigate = useNavigate();
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
+
+  useEffect(() => {
+    if (isSuccess) setIsOpen(false);
+  }, [isSuccess]);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -29,8 +38,6 @@ const NewBoardModal = ({ setIsOpen }) => {
     validateDates(startDate, endDate);
 
   const onSubmit = async (e) => {
-    console.log('submitted pls werk');
-
     e.preventDefault();
     if (canSave) {
       const newBoard = { title, description, startDate, endDate };
@@ -40,8 +47,11 @@ const NewBoardModal = ({ setIsOpen }) => {
     }
   };
 
-  const content = (
+  return (
     <div className="container--modal">
+      {isErrorOpen && (
+        <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+      )}
       <div className="modal" onClick={() => setIsOpen(false)}></div>
       <div className="modal-content modal-content__form">
         <div className="modal__header">
@@ -143,8 +153,6 @@ const NewBoardModal = ({ setIsOpen }) => {
       </div>
     </div>
   );
-
-  return content;
 };
 
 export default NewBoardModal;
