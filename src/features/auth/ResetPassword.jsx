@@ -6,6 +6,7 @@ import useTitle from '../../hooks/useTitle';
 import useValidateEmail from '../../hooks/useValidateEmail';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
+import SuccessModal from '../../components/SuccessModal';
 
 const ResetPassword = () => {
   useTitle('Copi');
@@ -14,10 +15,7 @@ const ResetPassword = () => {
 
   const [login, { isSuccess, isLoading, isError, error }] = useLoginMutation();
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
-
-  useEffect(() => {
-    if (isSuccess) setIsSuccessOpen(true);
-  }, [isSuccess]);
+  const [isSuccessOpen, setIsSuccessOpen] = useToggleModal(isSuccess);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +32,14 @@ const ResetPassword = () => {
     <section className="auth-section__form">
       {isErrorOpen && (
         <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+      )}
+      {isSuccessOpen && (
+        <SuccessModal
+          message={
+            'Please check your email for the instructions on how to reset your password'
+          }
+          setIsOpen={setIsSuccessOpen}
+        />
       )}
 
       <h2 className="auth-form__title">Reset Password</h2>

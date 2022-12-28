@@ -7,6 +7,7 @@ import setArrayIds from '../../utils/setArrayIds';
 import InfoIcon from '../../components/InfoIcon';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
+import SuccessModal from '../../components/SuccessModal';
 
 const UpdateBoardAdminsModal = ({
   boardAdmins,
@@ -20,6 +21,7 @@ const UpdateBoardAdminsModal = ({
     useUpdateBoardAdminsMutation();
 
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
+  const [isSuccessOpen, setIsSuccessOpen] = useToggleModal(isSuccess);
 
   const onSelectChange = (choices) => {
     setAdmins(() => {
@@ -28,10 +30,6 @@ const UpdateBoardAdminsModal = ({
   };
 
   const canSave = !isLoading && admins.length;
-
-  useEffect(() => {
-    if (isSuccess) setIsOpen(false);
-  }, [isSuccess]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -56,11 +54,19 @@ const UpdateBoardAdminsModal = ({
     }
   });
 
-  const content = (
+  return (
     <div className="container--modal">
       {isErrorOpen && (
         <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
       )}
+
+      {isSuccessOpen && (
+        <SuccessModal
+          message={'Board admins updated'}
+          setIsOpen={setIsSuccessOpen}
+        />
+      )}
+
       <div className="modal" onClick={() => setIsOpen(false)}></div>
       <div className="modal-content modal-content__form">
         <div className="modal__header">
@@ -114,8 +120,6 @@ const UpdateBoardAdminsModal = ({
       </div>
     </div>
   );
-
-  return content;
 };
 
 export default UpdateBoardAdminsModal;

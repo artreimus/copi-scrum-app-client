@@ -9,6 +9,7 @@ import useValidatePassword from '../../hooks/useValidatePassword';
 import InfoIcon from '../../components/InfoIcon';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
+import SuccessModal from '../../components/SuccessModal';
 
 const EditUserForm = ({ user }) => {
   const [username, setUsername] = useState(user.username);
@@ -26,6 +27,7 @@ const EditUserForm = ({ user }) => {
   const dispatch = useDispatch();
 
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
+  const [isSuccessOpen, setIsSuccessOpen] = useToggleModal(isSuccess);
 
   useEffect(() => {
     if (newPassword) {
@@ -39,7 +41,8 @@ const EditUserForm = ({ user }) => {
 
   useEffect(() => {
     if (isSuccess) {
-      navigate('/dash/user');
+      setOldPassword('');
+      setNewPassword('');
     }
   }, [isSuccess, navigate]);
 
@@ -81,6 +84,13 @@ const EditUserForm = ({ user }) => {
       {isErrorOpen && (
         <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
       )}
+      {isSuccessOpen && (
+        <SuccessModal
+          message={'Credentials updated'}
+          setIsOpen={setIsSuccessOpen}
+        />
+      )}
+
       <form
         className="user-profile__main user-profile__main-edit flex-col"
         onSubmit={(e) => e.preventDefault()}

@@ -7,6 +7,7 @@ import InfoIcon from '../../components/InfoIcon';
 import validateDates from '../../utils/validateDates';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
+import SuccessModal from '../../components/SuccessModal';
 
 const UpdateBoardModal = ({ board, boardId, setIsOpen }) => {
   const [title, setTitle] = useState(board?.title);
@@ -22,6 +23,7 @@ const UpdateBoardModal = ({ board, boardId, setIsOpen }) => {
     useUpdateBoardMutation();
 
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
+  const [isSuccessOpen, setIsSuccessOpen] = useToggleModal(isSuccess);
 
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onDescriptionChanged = (e) => setDescription(e.target.value);
@@ -32,10 +34,6 @@ const UpdateBoardModal = ({ board, boardId, setIsOpen }) => {
     [title, description, startDate, endDate].every(Boolean) &&
     !isLoading &&
     validateDates(startDate, endDate);
-
-  useEffect(() => {
-    if (isSuccess) setIsOpen(false);
-  }, [isSuccess]);
 
   useEffect(() => {
     if (board.private) {
@@ -62,10 +60,17 @@ const UpdateBoardModal = ({ board, boardId, setIsOpen }) => {
       {isErrorOpen && (
         <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
       )}
+      {isSuccessOpen && (
+        <SuccessModal
+          message={'Board successfully updated'}
+          setIsOpen={setIsSuccessOpen}
+        />
+      )}
+
       <div className="modal" onClick={() => setIsOpen(false)}></div>
       <div className="modal-content modal-content__form">
         <div className="modal__header">
-          <h3 className="modal__title">Edit Note</h3>
+          <h3 className="modal__title">Edit Board</h3>
           <button
             className="modal__btn--close"
             onClick={() => {

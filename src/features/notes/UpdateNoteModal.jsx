@@ -1,6 +1,6 @@
 import { useUpdateNoteMutation } from './notesApiSlice';
 import { useGetSingleBoardQuery } from '../boards/boardsApiSlice';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import Select from 'react-select';
@@ -11,6 +11,7 @@ import InfoIcon from '../../components/InfoIcon';
 import validateDates from '../../utils/validateDates';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
+import SuccessModal from '../../components/SuccessModal';
 
 const UpdateNoteForm = ({ note, setIsOpen }) => {
   const [title, setTitle] = useState(note?.title);
@@ -44,9 +45,8 @@ const UpdateNoteForm = ({ note, setIsOpen }) => {
   const [isErrorGetBoardOpen, setIsErrorGetBoardOpen] =
     useToggleModal(isGetBoardError);
 
-  // useEffect(() => {
-  //   if (isUpdateSuccess) setIsOpen(false);
-  // }, [isUpdateSuccess]);
+  const [isSuccessUpdateOpen, setIsSuccessUpdateOpen] =
+    useToggleModal(isUpdateSuccess);
 
   if (isGetBoardError && isErrorGetBoardOpen) {
     return (
@@ -107,6 +107,13 @@ const UpdateNoteForm = ({ note, setIsOpen }) => {
             setIsOpen={setIsErrorUpdateOpen}
           />
         )}
+        {isSuccessUpdateOpen && (
+          <SuccessModal
+            message={'Note successfully updated'}
+            setIsOpen={setIsSuccessUpdateOpen}
+          />
+        )}
+
         <div className="modal" onClick={() => setIsOpen(false)}></div>
         <div className="modal-content modal-content__form">
           <div className="modal__header">
@@ -229,7 +236,7 @@ const UpdateNoteForm = ({ note, setIsOpen }) => {
               disabled={
                 !verifyNoteStatus({ status, startDate, endDate }) ||
                 isUpdateLoading ||
-                !validateDates(startDate, endDate)
+                (startDate && endDate && !validateDates(startDate, endDate))
               }
             >
               Update

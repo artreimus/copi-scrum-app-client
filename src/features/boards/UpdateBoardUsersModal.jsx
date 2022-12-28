@@ -8,6 +8,7 @@ import setArrayIds from '../../utils/setArrayIds';
 import InfoIcon from '../../components/InfoIcon';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
+import SuccessModal from '../../components/SuccessModal';
 
 const UpdateBoardUsersModal = ({
   boardUsers,
@@ -44,6 +45,8 @@ const UpdateBoardUsersModal = ({
     useToggleModal(isUpdateError);
   const [isErrorGetUsersOpen, setIsErrorGetUsersOpen] =
     useToggleModal(isGetUsersError);
+  const [isSuccessUpdateOpen, setIsSuccessUpdateOpen] =
+    useToggleModal(isUpdateSuccess);
 
   if (isGetUsersError && isErrorGetUsersOpen) {
     return (
@@ -91,6 +94,12 @@ const UpdateBoardUsersModal = ({
           <ErrorModal
             message={updateError?.data?.message}
             setIsOpen={setIsErrorUpdateUsersOpen}
+          />
+        )}
+        {isSuccessUpdateOpen && (
+          <SuccessModal
+            message={'Board users updated'}
+            setIsOpen={setIsSuccessUpdateOpen}
           />
         )}
 

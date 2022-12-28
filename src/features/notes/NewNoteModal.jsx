@@ -7,6 +7,7 @@ import Select from 'react-select';
 import InfoIcon from '../../components/InfoIcon';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
+import SuccessModal from '../../components/SuccessModal';
 
 const NewNoteModal = ({ boardId, boardUsers, setIsOpen }) => {
   const [title, setTitle] = useState('');
@@ -17,6 +18,7 @@ const NewNoteModal = ({ boardId, boardUsers, setIsOpen }) => {
     useAddNewNoteMutation();
 
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
+  const [isSuccessOpen, setIsSuccessOpen] = useToggleModal(isSuccess);
 
   useEffect(() => {
     if (isSuccess) {
@@ -54,6 +56,10 @@ const NewNoteModal = ({ boardId, boardUsers, setIsOpen }) => {
       {isErrorOpen && (
         <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
       )}
+      {isSuccessOpen && (
+        <SuccessModal message={'Note created'} setIsOpen={setIsSuccessOpen} />
+      )}
+
       <div className="modal" onClick={() => setIsOpen(false)}></div>
       <div className="modal-content modal-content__form">
         <div className="modal__header">
