@@ -1,18 +1,19 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useGetSingleNoteQuery } from './notesApiSlice';
-import PulseLoader from 'react-spinners/PulseLoader';
+import Loader from 'react-spinners/MoonLoader';
 import UpdateNoteForm from './UpdateNoteModal';
 import formatDate from '../../utils/formatDate';
 import useToggleModal from '../../hooks/useToggleModal';
 import useWindowSize from '../../hooks/useWindowSize';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import ErrorModal from '../../components/ErrorModal';
 
 const NotePage = () => {
   const { id: noteId } = useParams();
   const [isOpen, setIsOpen] = useToggleModal();
   const windowSize = useWindowSize();
+  const navigate = useNavigate();
 
   const { data, isLoading, isSuccess, isError, error } = useGetSingleNoteQuery(
     noteId,
@@ -27,7 +28,12 @@ const NotePage = () => {
 
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
-  if (isLoading) return <PulseLoader color={'#FFF'} />;
+  if (isLoading)
+    return (
+      <div className="center-all container--loader">
+        <Loader color="#3861f6" size={130} />
+      </div>
+    );
 
   if (isError && isErrorOpen)
     return (
@@ -36,7 +42,7 @@ const NotePage = () => {
 
   if (isSuccess) {
     const { note } = data;
-    let { title, text, users, startDate, endDate, status } = note;
+    let { title, text, users, startDate, endDate, boardId } = note;
 
     if (startDate) {
       startDate = formatDate(startDate);
@@ -55,6 +61,12 @@ const NotePage = () => {
     return (
       <section className="boards-list">
         <div className="section__header section__header__note-page flex-row center-all">
+          <button
+            className="section__header__button section__header__button--primary--left "
+            onClick={() => navigate(`/dash/boards/${boardId}`)}
+          >
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </button>
           <button
             className="section__header__button btn--blue"
             onClick={() => setIsOpen(true)}
