@@ -56,7 +56,6 @@ const EditUserForm = ({ user }) => {
       if (canSave) {
         if (newPassword && oldPassword) {
           const { accessToken } = await updateUser({
-            userId: user._id,
             userInfo: {
               username,
               email,
