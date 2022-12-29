@@ -1,16 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import { useGetSingleUserQuery } from './usersApiSlice';
 import { memo } from 'react';
-import PulseLoader from 'react-spinners/PulseLoader';
 import useAuth from '../../hooks/useAuth';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
+import Loader from 'react-spinners/MoonLoader';
 
 const UserProfile = () => {
   const { userId } = useAuth();
   const navigate = useNavigate();
 
-  const { data, isLoading, isSuccess, isError, error } =
+  const { data, isSuccess, isLoading, isError, error } =
     useGetSingleUserQuery(userId);
 
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
@@ -22,7 +22,14 @@ const UserProfile = () => {
       <ErrorModal message={error.data.message} setIsOpen={setIsErrorOpen} />
     );
 
-  if (isLoading) return <PulseLoader color="#FFF" />;
+  if (isLoading)
+    return (
+      <section className="user-profile ">
+        <div className="center-all container--loader">
+          <Loader color="#fff" size={130} />
+        </div>
+      </section>
+    );
 
   if (isSuccess) {
     const { username, email } = data.user;

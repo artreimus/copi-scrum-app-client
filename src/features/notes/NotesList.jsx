@@ -1,22 +1,29 @@
 import { useGetNotesQuery } from './notesApiSlice';
 import Note from './Note';
-import PulseLoader from 'react-spinners/PulseLoader';
+import Loader from 'react-spinners/MoonLoader';
 import NotesListDropdown from './NotesListDropdown';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
 
-const NotesList = ({ boardId, boardUsers }) => {
-  const { data, isLoading, isSuccess, isFetching, isError, error } =
-    useGetNotesQuery(boardId, {
+const NotesList = ({ boardId }) => {
+  const { data, isSuccess, isLoading, isError, error } = useGetNotesQuery(
+    boardId,
+    {
       // refetch options
       pollingInterval: 15000,
       refetchOnFocus: true,
       refetchOnMountOrArgChange: true,
-    });
+    }
+  );
 
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
-  if (isLoading) return <PulseLoader color={'#FFF'} />;
+  if (isLoading)
+    return (
+      <div className="center-all container--loader">
+        <Loader color="#3861f6" size={130} />
+      </div>
+    );
 
   if (isError && isErrorOpen)
     return (

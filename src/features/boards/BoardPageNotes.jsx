@@ -12,6 +12,7 @@ import authorizeUser from '../../utils/authorizeUser';
 import useToggleModal from '../../hooks/useToggleModal';
 import NewNoteModal from '../notes/NewNoteModal';
 import ErrorModal from '../../components/ErrorModal';
+import Loader from 'react-spinners/MoonLoader';
 
 const BoardPageNotes = () => {
   const [isUserAdmin, setIsUserAdmin] = useState(false);
@@ -31,7 +32,7 @@ const BoardPageNotes = () => {
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
   useEffect(() => {
-    let { admins } = data.board;
+    const { admins } = data.board;
     if (isSuccess) {
       setIsUserAdmin(
         authorizeUser(
@@ -42,7 +43,12 @@ const BoardPageNotes = () => {
     }
   }, [isSuccess, isFetching]);
 
-  if (isLoading) return <PulseLoader color={'#FFF'} />;
+  if (isLoading)
+    return (
+      <div className="center-all container--loader">
+        <Loader color="#3861f6" size={130} />
+      </div>
+    );
 
   if (isError && isErrorOpen)
     return (
@@ -72,7 +78,7 @@ const BoardPageNotes = () => {
           users={users}
         />
 
-        <section section className="board-page">
+        <section className="board-page">
           <div className="section__header flex-row">
             <div>
               <h2 className="section__title section__header__title truncate-text">
@@ -98,7 +104,7 @@ const BoardPageNotes = () => {
               setIsOpen={setIsOpen}
             />
           )}
-          <NotesList boardId={boardId} boardUsers={users} />
+          <NotesList boardId={boardId} />
         </section>
       </>
     );

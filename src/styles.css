@@ -274,21 +274,14 @@ button:disabled {
 .item__text {
   font-size: 0.8rem;
   max-width: 100%;
-  /* max-height: 50%; */
   overflow-wrap: anywhere;
   overflow: hidden;
   text-overflow: ellipsis;
-  /* white-space: wrap; */
-  /* inline-size: 150px; */
-  /* overflow-wrap: break-word; */
-  /* hyphens: manual; */
-  /* white-space: nowrap; */
-  /* overflow: hidden; */
 }
 
 .section__header__button {
   position: absolute;
-  top: 14%;
+  top: 20%;
   right: 3%;
   border-radius: 25px;
   padding: 0.3rem 0.7rem;
@@ -296,8 +289,20 @@ button:disabled {
 }
 
 .section__header__button--secondary {
-  top: 14%;
+  top: 20%;
   right: 15%;
+}
+
+.section__header__button--primary--left {
+  position: absolute;
+  border-radius: 25px;
+  padding: 0.3rem 0.7rem;
+  font-size: 1rem;
+  color: rgb(88, 88, 88);
+  border: none;
+  top: 14%;
+  right: auto;
+  left: 3%;
 }
 
 .section__header {
@@ -595,6 +600,15 @@ button:disabled {
 
 .info-icon {
   position: relative;
+}
+
+.container--loader {
+  height: 80vh;
+}
+
+.note_container--loader {
+  padding: 1rem 0;
+  margin-bottom: 3rem;
 }
 
 /* auth pages */
@@ -1151,6 +1165,39 @@ button:disabled {
   margin-left: 0.55rem;
 }
 
+.missing {
+  height: 100vh;
+  background-color: #3861f6;
+}
+
+.article__mising {
+  background-color: #ffffff;
+  padding: 2rem 1.5rem;
+  border-radius: 15px;
+  flex-direction: column;
+  width: 80%;
+  max-width: 800px;
+  font-size: 1.5rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.article__mising__title {
+  font-size: 3rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+}
+
+.article__mising__text {
+  text-align: center;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.article__missing__btn {
+  font-size: 0.8rem;
+}
+
 input:not(:placeholder-shown):not(:focus):invalid {
   border: 1px solid red;
 }
@@ -1161,7 +1208,7 @@ input:not(:placeholder-shown):not(:focus):invalid {
   }
 
   .btn--blue {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 
   .section__header__button {
@@ -1170,6 +1217,10 @@ input:not(:placeholder-shown):not(:focus):invalid {
 
   .section__header__button--secondary {
     right: 25%;
+  }
+
+  .section__header__button--primary--left {
+    font-size: 1.2rem;
   }
 
   .section__header__button > svg {
@@ -1247,7 +1298,7 @@ input:not(:placeholder-shown):not(:focus):invalid {
   }
 
   .home-main__btn--blue {
-    background-color: #3861f6;
+    background-color: #b0c1ffb0;
     color: #fefefe;
     padding: 0.7em 1.2em;
     align-self: start;
@@ -1349,5 +1400,13 @@ input:not(:placeholder-shown):not(:focus):invalid {
 
   .welcome-item {
     font-size: 1.1rem;
+  }
+
+  .article__mising {
+    font-size: 2.5rem;
+  }
+
+  .article__mising__title {
+    font-size: 4rem;
   }
 }

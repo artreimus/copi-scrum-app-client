@@ -4,17 +4,26 @@ import { useNavigate } from 'react-router-dom';
 import { memo } from 'react';
 import useAuth from '../../hooks/useAuth';
 import setArrayIds from '../../utils/setArrayIds';
+import Loader from 'react-spinners/RingLoader';
 
 const Board = ({ boardId }) => {
   const { userId } = useAuth();
-  const { board, isSuccess } = useGetBoardsQuery('boardsList', {
-    selectFromResult: ({ data, isSuccess }) => ({
+  const { board, isSuccess, isLoading } = useGetBoardsQuery('boardsList', {
+    selectFromResult: ({ data, isSuccess, isLoading }) => ({
       board: data?.entities[boardId],
       isSuccess,
     }),
   });
 
   const navigate = useNavigate();
+
+  if (isLoading)
+    return (
+      <div className="center-all ">
+        <Loader color="#b0c1ffb0" opacity={0.3} size={80} />
+      </div>
+    );
+
   let content = null;
 
   if (isSuccess) {

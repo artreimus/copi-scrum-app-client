@@ -1,5 +1,5 @@
 import { useGetBoardsQuery } from './boardsApiSlice';
-import PulseLoader from 'react-spinners/PulseLoader';
+import Loader from 'react-spinners/MoonLoader';
 import useTitle from '../../hooks/useTitle';
 import Board from './Board';
 import NewBoardModal from './NewBoardModal';
@@ -30,13 +30,19 @@ const BoardsList = () => {
 
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
-  let content = null;
-  if (isLoading) return <PulseLoader color={'#FFF'} />;
+  if (isLoading)
+    return (
+      <div className="center-all container--loader">
+        <Loader color="#3861f6" size={130} />
+      </div>
+    );
 
   if (isError && isErrorOpen)
     return (
       <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
     );
+
+  let content = null;
 
   if (isSuccess && !isFetching) {
     const { ids } = boards;

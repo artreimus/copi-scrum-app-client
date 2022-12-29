@@ -2,16 +2,24 @@ import { useNavigate } from 'react-router-dom';
 import { useGetNotesQuery } from './notesApiSlice';
 import { memo } from 'react';
 import formatDate from '../../utils/formatDate';
+import Loader from 'react-spinners/RingLoader';
 
 const Note = ({ boardId, noteId }) => {
-  const { note, isSuccess } = useGetNotesQuery(boardId, {
-    selectFromResult: ({ data, isSuccess }) => ({
+  const navigate = useNavigate();
+  const { note, isSuccess, isLoading } = useGetNotesQuery(boardId, {
+    selectFromResult: ({ data, isSuccess, isLoading }) => ({
       note: data?.entities[noteId],
       isSuccess,
+      isLoading,
     }),
   });
 
-  const navigate = useNavigate();
+  if (isLoading)
+    return (
+      <div className="center-all note_container--loader">
+        <Loader color="#3861f6" size={50} />
+      </div>
+    );
 
   let content = null;
 

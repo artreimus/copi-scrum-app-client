@@ -12,6 +12,7 @@ import validateDates from '../../utils/validateDates';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
 import SuccessModal from '../../components/SuccessModal';
+import Loader from 'react-spinners/MoonLoader';
 
 const UpdateNoteForm = ({ note, setIsOpen }) => {
   const [title, setTitle] = useState(note?.title);
@@ -47,6 +48,18 @@ const UpdateNoteForm = ({ note, setIsOpen }) => {
 
   const [isSuccessUpdateOpen, setIsSuccessUpdateOpen] =
     useToggleModal(isUpdateSuccess);
+
+  if (isGetBoardLoading)
+    return (
+      <div className="container--modal">
+        <div className="modal" onClick={() => setIsOpen(false)}></div>
+        <div className="modal-content modal-content__form">
+          <div className="center-all">
+            <Loader color="#3861f6" size={130} />
+          </div>
+        </div>
+      </div>
+    );
 
   if (isGetBoardError && isErrorGetBoardOpen) {
     return (

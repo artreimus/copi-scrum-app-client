@@ -1,15 +1,19 @@
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
 import { useParams } from 'react-router-dom';
 import { useGetSingleBoardQuery } from '../boards/boardsApiSlice';
-import PulseLoader from 'react-spinners/PulseLoader';
+import Loader from 'react-spinners/MoonLoader';
 
 const RequirePubBoard = () => {
   const location = useLocation();
   const { id } = useParams();
   const { data, isSuccess, isLoading } = useGetSingleBoardQuery(id);
 
-  if (isLoading) return <PulseLoader color="#FFF" />;
+  if (isLoading)
+    return (
+      <div className="center-all container--loader">
+        <Loader color="#3861f6" size={130} />
+      </div>
+    );
 
   let content = null;
   if (isSuccess) {

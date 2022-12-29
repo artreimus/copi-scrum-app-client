@@ -12,6 +12,7 @@ import UpdateBoardModal from './UpdateBoardModal';
 import BoardPageHeader from './BoardPageHeader';
 import DeleteBoardModal from './DeleteBoardModal';
 import ErrorModal from '../../components/ErrorModal';
+import Loader from 'react-spinners/MoonLoader';
 
 const BoardPageAbout = () => {
   const [isUserAdmin, setIsUserAdmin] = useState(false);
@@ -21,22 +22,16 @@ const BoardPageAbout = () => {
   const windowSize = useWindowSize();
 
   const { id: boardId } = useParams();
-  const {
-    data,
-    isLoading,
-    isSuccess,
-
-    isError,
-    error,
-  } = useGetSingleBoardQuery(boardId, 'boardPage', {
-    // refetch options
-    pollingInterval: 60000,
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
-
-  // const error = { data: { message: 'testing error msg' } };
-  // const isError = true;
+  const { data, isSuccess, isLoading, isError, error } = useGetSingleBoardQuery(
+    boardId,
+    'boardPage',
+    {
+      // refetch options
+      pollingInterval: 60000,
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
@@ -52,7 +47,12 @@ const BoardPageAbout = () => {
     }
   }, [isSuccess]);
 
-  if (isLoading) return <PulseLoader color={'#FFF'} />;
+  if (isLoading)
+    return (
+      <div className="center-all container--loader">
+        <Loader color="#3861f6" size={130} />
+      </div>
+    );
   if (isError && isErrorOpen)
     return (
       <ErrorModal message={error.data.message} setIsOpen={setIsErrorOpen} />
@@ -106,7 +106,7 @@ const BoardPageAbout = () => {
             setIsOpen={setIsErrorOpen}
           />
         )}
-        <section section className="board-page">
+        <section className="board-page">
           <div className="section__header section__header__board-page__about flex-row">
             {isUserAdmin && (
               <>

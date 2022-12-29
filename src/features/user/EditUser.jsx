@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import EditUserForm from './EditUserForm';
 import { useGetUsersQuery } from './usersApiSlice';
-import PulseLoader from 'react-spinners/PulseLoader';
+import Loader from 'react-spinners/MoonLoader';
 import useTitle from '../../hooks/useTitle';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
@@ -23,7 +23,15 @@ const EditUser = () => {
   );
 
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
-  if (isLoading) return <PulseLoader color={'#FFF'} />;
+
+  if (isLoading)
+    return (
+      <section className="user-profile center-all">
+        <div className="center-all container--loader">
+          <Loader color="#fff" size={130} />
+        </div>
+      </section>
+    );
 
   if (isError && isErrorOpen) {
     return (

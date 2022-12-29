@@ -9,6 +9,7 @@ import InfoIcon from '../../components/InfoIcon';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
 import SuccessModal from '../../components/SuccessModal';
+import Loader from 'react-spinners/MoonLoader';
 
 const UpdateBoardUsersModal = ({
   boardUsers,
@@ -47,6 +48,18 @@ const UpdateBoardUsersModal = ({
     useToggleModal(isGetUsersError);
   const [isSuccessUpdateOpen, setIsSuccessUpdateOpen] =
     useToggleModal(isUpdateSuccess);
+
+  if (isGetUsersLoading)
+    return (
+      <div className="container--modal">
+        <div className="modal" onClick={() => setIsOpen(false)}></div>
+        <div className="modal-content modal-content__form">
+          <div className="center-all">
+            <Loader color="#3861f6" size={130} />
+          </div>
+        </div>
+      </div>
+    );
 
   if (isGetUsersError && isErrorGetUsersOpen) {
     return (
