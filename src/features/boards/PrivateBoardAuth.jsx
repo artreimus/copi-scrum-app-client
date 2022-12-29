@@ -11,8 +11,7 @@ const PrivateBoardAuth = () => {
   const { id: boardId } = useParams();
   const { userId } = useAuth();
 
-  const [accessBoard, { isSuccess, isLoading, isError, error }] =
-    useAccessBoardMutation();
+  const [accessBoard, { isLoading, isError, error }] = useAccessBoardMutation();
 
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
@@ -51,7 +50,12 @@ const PrivateBoardAuth = () => {
               required
             />
           </div>
-          <button className="btn--blue join-board__article__btn">Submit</button>
+          <button
+            className="btn--blue join-board__article__btn"
+            disabled={isLoading}
+          >
+            Submit
+          </button>
         </form>
       </article>
     </section>

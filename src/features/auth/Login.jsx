@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import { setCredentials } from './authSlice';
 import { useLoginMutation } from './authApiSlice';
 import usePersist from '../../hooks/usePersist';
-import PulseLoader from 'react-spinners/PulseLoader';
 import useTitle from '../../hooks/useTitle';
 import useValidateEmail from '../../hooks/useValidateEmail';
 import ErrorModal from '../../components/ErrorModal';
@@ -63,11 +62,12 @@ const Login = () => {
     }
   };
 
+  const canSave = [credential, password].every(Boolean) && !isLoading;
+
   const handleUserInput = (e) => setCredential(e.target.value);
   const handlePwdInput = (e) => setPassword(e.target.value);
   const handleToggle = () => setPersist((prev) => !prev);
 
-  if (isLoading) return <PulseLoader color={'#FFF'} />;
   return (
     <section className="auth-section__form">
       {isErrorOpen && (
@@ -109,7 +109,9 @@ const Login = () => {
             Remember me
           </label>
         </div>
-        <button className="btn--black">Sign In</button>
+        <button className="btn--black" disabled={!canSave}>
+          Sign In
+        </button>
       </form>
       <div className="center-all auth-form__container--link">
         <p>

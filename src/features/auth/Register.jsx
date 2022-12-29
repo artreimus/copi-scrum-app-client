@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useRegisterMutation } from './authApiSlice';
 import usePersist from '../../hooks/usePersist';
-import PulseLoader from 'react-spinners/PulseLoader';
 import useTitle from '../../hooks/useTitle';
 import useValidateUsername from '../../hooks/useValidateUsername';
 import useValidateEmail from '../../hooks/useValidateEmail';
@@ -13,7 +12,6 @@ import useToggleModal from '../../hooks/useToggleModal';
 const Register = () => {
   useTitle('Copi');
   const emailRef = useRef();
-  const errRef = useRef();
   const [username, setUsername] = useState('');
   const validUsername = useValidateUsername(username);
   const [email, setEmail] = useState('');
@@ -21,7 +19,6 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const validPassword = useValidatePassword(password);
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
   const [canSave, setCanSave] = useState(false);
   const [, setPersist] = usePersist();
 
@@ -34,10 +31,6 @@ const Register = () => {
   useEffect(() => {
     emailRef.current.focus();
   }, []);
-
-  useEffect(() => {
-    setErrorMsg('');
-  }, [username, password]);
 
   useEffect(() => {
     setCanSave(
@@ -67,8 +60,6 @@ const Register = () => {
   const handleEmailInput = (e) => setEmail(e.target.value);
   const handlePwdInput = (e) => setPassword(e.target.value);
   const handleConfirmPwdInput = (e) => setConfirmPassword(e.target.value);
-
-  if (isLoading) return <PulseLoader color={'#FFF'} />;
 
   return (
     <section className="auth-section__form">

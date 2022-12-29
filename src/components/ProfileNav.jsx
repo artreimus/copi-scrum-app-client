@@ -25,6 +25,12 @@ const ProfileNav = () => {
 
   const toggleMenu = () => setIsMenuOpen((prevIsMenuOpen) => !prevIsMenuOpen);
 
+  const onLogoutClicked = () => {
+    if (!isLoading) {
+      sendLogout();
+    }
+  };
+
   return (
     <>
       {isErrorOpen && (
@@ -56,7 +62,7 @@ const ProfileNav = () => {
                 Update Profile
               </Link>
             </li>
-            <li className="profile-tab__menu__item" onClick={sendLogout}>
+            <li className="profile-tab__menu__item" onClick={onLogoutClicked}>
               Logout
             </li>
           </ul>

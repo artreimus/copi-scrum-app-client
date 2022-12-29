@@ -19,8 +19,6 @@ const PublicBoardAuth = () => {
     await accessBoard({ boardId, credentials: { userId } });
   };
 
-  if (isLoading) return <PulseLoader color="#FFF" />;
-
   return (
     <section className="center-all join-board">
       {isErrorOpen && (
@@ -35,6 +33,7 @@ const PublicBoardAuth = () => {
         <button
           onClick={onBtnClicked}
           className="btn--blue join-board__article__btn"
+          disabled={isLoading}
         >
           Join board
         </button>
