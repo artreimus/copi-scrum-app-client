@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useUpdateBoardAdminsMutation } from './boardsApiSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -35,7 +35,6 @@ const UpdateBoardAdminsModal = ({
     e.preventDefault();
 
     if (canSave) {
-      const users = allUsers.filter((user) => admins.includes(user._id));
       await updateAdmins({ boardId, admins });
     }
   };
