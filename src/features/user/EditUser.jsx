@@ -43,7 +43,7 @@ const EditUser = () => {
 
   if (isSuccess) {
     content = (
-      <section className="user-profile center-all">
+      <section className="user-profile">
         <EditUserForm user={user} />
       </section>
     );
