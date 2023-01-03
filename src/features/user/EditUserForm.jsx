@@ -10,8 +10,31 @@ import InfoIcon from '../../components/InfoIcon';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
 import SuccessModal from '../../components/SuccessModal';
+import { FilePond, registerPlugin } from 'react-filepond';
+import 'filepond/dist/filepond.min.css';
+import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import { useSelector } from 'react-redux';
+import { selectCurrentToken } from '../auth/authSlice';
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import FilePondPluginImageCrop from 'filepond-plugin-image-crop';
+import FilePondPluginImageResize from 'filepond-plugin-image-resize';
+import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
+import FilePondPluginImageEdit from 'filepond-plugin-image-edit';
+
+registerPlugin(
+  FilePondPluginImageExifOrientation,
+  FilePondPluginImagePreview,
+  FilePondPluginFileValidateType,
+  FilePondPluginImageCrop,
+  FilePondPluginImageResize,
+  FilePondPluginImageTransform,
+  FilePondPluginImageEdit
+);
 
 const EditUserForm = ({ user }) => {
+  const [errorMsg, setErrorMsg] = useState('');
   const [username, setUsername] = useState(user.username);
   const validUsername = useValidateUsername(username);
   const [oldPassword, setOldPassword] = useState('');
@@ -20,13 +43,17 @@ const EditUserForm = ({ user }) => {
   const [email, setEmail] = useState(user.email ?? '');
   const validEmail = useValidateEmail(email);
   const [canSave, setCanSave] = useState(false);
-  const [updateUser, { isLoading, isSuccess, isError, error }] =
-    useUpdateUserMutation();
+
+  const [images, setImages] = useState([]);
+  const token = useSelector(selectCurrentToken);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
+  const [updateUser, { isLoading, isSuccess, isError, error }] =
+    useUpdateUserMutation();
+
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal();
   const [isSuccessOpen, setIsSuccessOpen] = useToggleModal(isSuccess);
 
   useEffect(() => {
@@ -37,7 +64,7 @@ const EditUserForm = ({ user }) => {
     } else {
       setCanSave([validUsername, validEmail].every(Boolean) && !isLoading);
     }
-  }, [validUsername, validEmail, validPassword]);
+  }, [validUsername, validEmail, validPassword, isLoading]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -45,6 +72,25 @@ const EditUserForm = ({ user }) => {
       setNewPassword('');
     }
   }, [isSuccess, navigate]);
+
+  const uploadImageFile = async () => {
+    const formData = new FormData();
+    formData.append('image', images[0].file);
+
+    const response = await fetch('/api/v1/users/uploads', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (response.status === 400) {
+      throw new Error('Error uploading file');
+    }
+
+    return response.json();
+  };
 
   const onEmailChanged = (e) => setEmail(e.currentTarget.value);
   const onUsernameChanged = (e) => setUsername(e.currentTarget.value);
@@ -54,34 +100,39 @@ const EditUserForm = ({ user }) => {
   const onSaveUserClicked = async (e) => {
     try {
       if (canSave) {
-        if (newPassword && oldPassword) {
-          const { accessToken } = await updateUser({
-            userInfo: {
-              username,
-              email,
-              oldPassword,
-              newPassword,
-            },
-          }).unwrap();
-          dispatch(setCredentials({ accessToken }));
-        } else {
-          const { accessToken } = await updateUser({
-            userId: user._id,
-            userInfo: {
-              username,
-              email,
-            },
-          }).unwrap();
-          dispatch(setCredentials({ accessToken }));
+        setCanSave(false);
+        const userInfo = {
+          username,
+          email,
+        };
+
+        if (images.length) {
+          const { image } = await uploadImageFile();
+          userInfo.image = image.src;
         }
+        if (newPassword && oldPassword) {
+          userInfo.oldPassword = oldPassword;
+          userInfo.newPassword = newPassword;
+        }
+        const { accessToken } = await updateUser({ userInfo }).unwrap();
+        dispatch(setCredentials({ accessToken }));
       }
-    } catch (error) {}
+    } catch (error) {
+      if (error.data?.message) {
+        setErrorMsg(error?.data?.message);
+      } else {
+        setErrorMsg(error.message);
+      }
+      setIsErrorOpen(true);
+    } finally {
+      setCanSave(true);
+    }
   };
 
   const content = (
     <>
       {isErrorOpen && (
-        <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+        <ErrorModal message={errorMsg} setIsOpen={setIsErrorOpen} />
       )}
       {isSuccessOpen && (
         <SuccessModal
@@ -95,6 +146,38 @@ const EditUserForm = ({ user }) => {
         onSubmit={(e) => e.preventDefault()}
       >
         <h3 className="section__title user-profile__title">Edit Profile</h3>
+        <div className="center-all">
+          <FilePond
+            files={images}
+            onupdatefiles={setImages}
+            allowMultiple={false}
+            instantUpload={false}
+            // server={{
+            //   process: {
+            //     url: '/api/v1/users/uploads',
+            //     // url: null,
+            //     headers: {
+            //       Authorization: `Bearer ${token}`,
+            //     },
+            //     onload: (result) => {
+            //       console.log(result);
+            //       setImageSrc(JSON.parse(result).image.src);
+            //     },
+            //   },
+            // }}
+            // name="image"
+            labelIdle='Drag and drop your files or <span class="filepond--label-action">Browse</span>'
+            imagePreviewHeight={170}
+            allowFileTypeValidation={true}
+            acceptedFileTypes={['image/*']}
+            allowImageCrop={true}
+            imageCropAspectRatio="1:1"
+            allowImageResize={true}
+            imageResizeTargetWidth={200}
+            imageResizeTargetHeight={200}
+            stylePanelLayout="compact circle"
+          />
+        </div>
         <div className="flex-col user-profile__container user-profile__container--info user-profile__container--info-edit">
           <div className="flex-row user-profile__container-label">
             <label htmlFor="username" className="user-profile__info__label">
@@ -129,7 +212,6 @@ const EditUserForm = ({ user }) => {
             onChange={onEmailChanged}
           />
         </div>
-
         <div className="flex-col user-profile__container user-profile__container--info user-profile__container--info-edit">
           <div className="flex-row user-profile__container-label">
             <label htmlFor="oldPassword" className="user-profile__info__label">
@@ -169,7 +251,6 @@ const EditUserForm = ({ user }) => {
             maxLength="100"
           />
         </div>
-
         <button
           className="btn--blue user-profile__btn"
           title="save"
