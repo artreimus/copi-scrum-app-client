@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSendLogoutMutation } from '../features/auth/authApiSlice';
+import { useGetSingleUserQuery } from '../features/user/usersApiSlice';
 import { useEffect, useState } from 'react';
 import useAuth from '../hooks/useAuth';
 import ErrorModal from './ErrorModal';
@@ -14,6 +15,8 @@ const ProfileNav = () => {
 
   const [sendLogout, { isLoading, isSuccess, isError }] =
     useSendLogoutMutation();
+
+  const { data, isSuccess: isGetUserSuccess } = useGetSingleUserQuery(userId);
 
   const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
 
@@ -41,9 +44,19 @@ const ProfileNav = () => {
         onClick={() => setIsMenuOpen(false)}
       ></div>
       <div className="profile-tab center-all">
-        <button className="profile-tab__menu__btn" onClick={toggleMenu}>
-          {username.charAt(0).toUpperCase()}
-        </button>
+        {isGetUserSuccess && data.user.image ? (
+          <button
+            className="profile-tab__menu__btn--image"
+            onClick={toggleMenu}
+          >
+            <img src={data.user.image} alt="user image" className="avatar" />
+          </button>
+        ) : (
+          <button className="profile-tab__menu__btn" onClick={toggleMenu}>
+            {username.charAt(0).toUpperCase()}
+          </button>
+        )}
+
         <div
           className={
             isMenuOpen

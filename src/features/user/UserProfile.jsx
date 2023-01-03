@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { useGetSingleUserQuery } from './usersApiSlice';
-import { memo } from 'react';
 import useAuth from '../../hooks/useAuth';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
@@ -32,15 +31,21 @@ const UserProfile = () => {
     );
 
   if (isSuccess) {
-    const { username, email } = data.user;
+    const { username, email, image } = data.user;
 
     return (
       <section className="user-profile ">
         <div className="user-profile__main flex-col">
           <div className="flex-col user-profile__container user-profile__container__main--info ">
-            <div className="user-profile__picture center-all">
-              {username.charAt(0).toUpperCase()}
-            </div>
+            {image ? (
+              <div className="user-profile__picture--image">
+                <img src={image} alt="user image" className="avatar" />
+              </div>
+            ) : (
+              <div className="user-profile__picture--default center-all">
+                {username.charAt(0).toUpperCase()}
+              </div>
+            )}
             <p className="user-profile__username">{username}</p>
           </div>
           <div className="flex-row user-profile__container user-profile__container--info">
@@ -66,4 +71,4 @@ const UserProfile = () => {
   }
 };
 
-export default memo(UserProfile);
+export default UserProfile;

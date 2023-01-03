@@ -36,11 +36,18 @@ const Note = ({ boardId, noteId }) => {
 
     const navigateToNotePage = () => navigate(`/dash/notes/${note._id}`);
 
-    const usersElement = users?.slice(0, 4).map((user, index) => (
-      <div key={user._id} className="note-item__user center-all">
-        {user.username.charAt(0)}
-      </div>
-    ));
+    const usersElement = users?.slice(0, 4).map((user, index) => {
+      console.log(user);
+      return (
+        <div key={user._id} className="note-item__user center-all">
+          {user.image ? (
+            <img src={user.image} alt="user image" className="avatar" />
+          ) : (
+            user.username.charAt(0)
+          )}
+        </div>
+      );
+    });
 
     content = (
       <li className="note-item" onClick={navigateToNotePage}>

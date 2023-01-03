@@ -52,10 +52,14 @@ const NotePage = () => {
       endDate = formatDate(endDate);
     }
 
-    const usersElement = users?.map((user, index) => (
-      <p key={user._id} className="profile-tab__menu__btn center-all">
-        {user.username.charAt(0)}
-      </p>
+    const usersElement = users?.map((user) => (
+      <div key={user._id} className="note-item__user center-all">
+        {user.image ? (
+          <img src={user.image} alt="user image" className="avatar" />
+        ) : (
+          user.username.charAt(0)
+        )}
+      </div>
     ));
 
     return (
@@ -88,7 +92,7 @@ const NotePage = () => {
             <p>{endDate ?? 'None'}</p>
             <p className="article__about__label">Assigned users</p>
             <div className="article__about__container--users grid--users">
-              {usersElement.length || 'None'}
+              {usersElement.length ? usersElement : 'None'}
             </div>
           </div>
           <div className="flex-row"></div>

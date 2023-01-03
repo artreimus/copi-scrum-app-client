@@ -81,14 +81,22 @@ const BoardPageAbout = () => {
     }
 
     const adminsElement = admins?.map((admin, index) => (
-      <p key={index} className="profile-tab__menu__btn center-all">
-        {admin.username.charAt(0)}
-      </p>
+      <div key={index} className="note-item__user center-all">
+        {admin.image ? (
+          <img src={admin.image} alt="admin image" className="avatar" />
+        ) : (
+          admin.username.charAt(0)
+        )}
+      </div>
     ));
     const usersElement = users?.map((user, index) => (
-      <p key={user._id} className="profile-tab__menu__btn center-all">
-        {user.username.charAt(0)}
-      </p>
+      <div key={user._id} className="note-item__user center-all">
+        {user.image ? (
+          <img src={user.image} alt="user image" className="avatar" />
+        ) : (
+          user.username.charAt(0)
+        )}
+      </div>
     ));
 
     content = (
