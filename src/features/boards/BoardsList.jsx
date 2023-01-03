@@ -47,9 +47,9 @@ const BoardsList = () => {
   if (isSuccess && !isFetching) {
     const { ids } = boards;
 
-    const boardsListItems =
-      ids?.length &&
-      ids.map((boardId) => <Board key={boardId} boardId={boardId} />);
+    const boardsListItems = ids?.map((boardId) => (
+      <Board key={boardId} boardId={boardId} />
+    ));
 
     content = (
       <>
