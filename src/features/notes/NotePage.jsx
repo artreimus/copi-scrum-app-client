@@ -42,7 +42,7 @@ const NotePage = () => {
 
   if (isSuccess) {
     const { note } = data;
-    let { title, text, users, startDate, endDate, boardId } = note;
+    let { title, text, users, startDate, endDate, boardId: board } = note;
 
     if (startDate) {
       startDate = formatDate(startDate);
@@ -67,7 +67,7 @@ const NotePage = () => {
         <div className="section__header section__header__note-page flex-row center-all">
           <button
             className="section__header__button section__header__button--primary--left "
-            onClick={() => navigate(`/dash/boards/${boardId}`)}
+            onClick={() => navigate(`/dash/boards/${board._id}`)}
           >
             <FontAwesomeIcon icon={faArrowLeft} />
           </button>
@@ -86,6 +86,8 @@ const NotePage = () => {
             <p className="article__about__container__text">{text}</p>
           </div>
           <div className="article__about__grid">
+            <p className="article__about__label">Board</p>
+            <p>{board?.title}</p>
             <p className="article__about__label">Start Date (Target)</p>
             <p>{startDate ?? 'None'}</p>
             <p className="article__about__label">End Date (Target)</p>

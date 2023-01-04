@@ -38,7 +38,7 @@ const UpdateNoteForm = ({ note, setIsOpen }) => {
     isSuccess: isGetBoardSuccess,
     isError: isGetBoardError,
     error: getBoardError,
-  } = useGetSingleBoardQuery(note.boardId);
+  } = useGetSingleBoardQuery(note.boardId._id);
 
   const [isErrorUpdateOpen, setIsErrorUpdateOpen] =
     useToggleModal(isUpdateError);

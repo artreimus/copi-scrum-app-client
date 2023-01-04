@@ -43,7 +43,8 @@ const LeaveBoardModal = ({ boardId, setIsOpen, boardUsers }) => {
           </button>
         </div>
         <p className="modal__text--prompt">
-          Are you sure you want to leave this board?
+          Leaving will remove all your assigned notes in the board. Are you sure
+          you want to leave this board?
         </p>
         <div className="center-all">
           <button
