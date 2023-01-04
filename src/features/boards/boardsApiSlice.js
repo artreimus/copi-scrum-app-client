@@ -84,7 +84,10 @@ export const boardsApiSlice = apiSlice.injectEndpoints({
           users,
         },
       }),
-      invalidatesTags: (result, error, arg) => [{ type: 'Board', id: arg.id }],
+      invalidatesTags: (result, error, arg) => [
+        { type: 'Board', id: arg.id },
+        { type: 'Note', id: 'LIST' },
+      ],
     }),
     deleteBoard: builder.mutation({
       query: (boardId) => ({
