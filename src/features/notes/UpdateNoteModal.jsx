@@ -13,12 +13,13 @@ import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
 import SuccessModal from '../../components/SuccessModal';
 import Loader from 'react-spinners/MoonLoader';
+import setArrayIds from '../../utils/setArrayIds';
 
 const UpdateNoteModal = ({ note, setIsOpen }) => {
   const [title, setTitle] = useState(note?.title);
   const [text, setText] = useState(note?.text);
   const [status, setStatus] = useState(note?.status);
-  const [users, setUsers] = useState([...note?.users]);
+  const [users, setUsers] = useState(setArrayIds(note.users));
   const [startDate, setStartDate] = useState(note?.startDate ?? null);
   const [endDate, setEndDate] = useState(note?.endDate ?? null);
 
