@@ -1,17 +1,19 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetSingleNoteQuery } from './notesApiSlice';
 import Loader from 'react-spinners/MoonLoader';
-import UpdateNoteForm from './UpdateNoteModal';
+import UpdateNoteModal from './UpdateNoteModal';
 import formatDate from '../../utils/formatDate';
 import useToggleModal from '../../hooks/useToggleModal';
 import useWindowSize from '../../hooks/useWindowSize';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faArrowLeft, faTrash } from '@fortawesome/free-solid-svg-icons';
 import ErrorModal from '../../components/ErrorModal';
+import DeleteNoteModal from './DeleteNoteModal';
 
 const NotePage = () => {
   const { id: noteId } = useParams();
-  const [isOpen, setIsOpen] = useToggleModal();
+  const [isUpdateNoteOpen, setIsUpdateNoteOpen] = useToggleModal();
+  const [isDeleteNoteModalOpen, setIsDeleteNoteModalOpen] = useToggleModal();
   const windowSize = useWindowSize();
   const navigate = useNavigate();
 
@@ -72,8 +74,15 @@ const NotePage = () => {
             <FontAwesomeIcon icon={faArrowLeft} />
           </button>
           <button
+            className="section__header__button  section__header__button--secondary btn--red"
+            onClick={() => setIsDeleteNoteModalOpen(true)}
+          >
+            {windowSize.width > 600 && 'Delete Note'}
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+          <button
             className="section__header__button btn--blue"
-            onClick={() => setIsOpen(true)}
+            onClick={() => setIsUpdateNoteOpen(true)}
           >
             {windowSize.width > 600 && 'Edit Note'}
             <FontAwesomeIcon icon={faPen} />
@@ -99,7 +108,16 @@ const NotePage = () => {
           </div>
           <div className="flex-row"></div>
         </article>
-        {isOpen && <UpdateNoteForm note={note} setIsOpen={setIsOpen} />}
+        {isUpdateNoteOpen && (
+          <UpdateNoteModal note={note} setIsOpen={setIsUpdateNoteOpen} />
+        )}
+        {isDeleteNoteModalOpen && (
+          <DeleteNoteModal
+            boardId={board._id}
+            noteId={noteId}
+            setIsOpen={setIsDeleteNoteModalOpen}
+          />
+        )}
       </section>
     );
   }
