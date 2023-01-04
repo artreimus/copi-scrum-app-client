@@ -1,74 +1,97 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useLoginMutation } from './authApiSlice';
-import PulseLoader from 'react-spinners/PulseLoader';
+import { useEffect, useState } from 'react';
 import useTitle from '../../hooks/useTitle';
-import useValidateEmail from '../../hooks/useValidateEmail';
+import useValidatePassword from '../../hooks/useValidatePassword';
 import useToggleModal from '../../hooks/useToggleModal';
 import ErrorModal from '../../components/ErrorModal';
 import SuccessModal from '../../components/SuccessModal';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import Loader from 'react-spinners/BeatLoader';
 
 const ResetPassword = () => {
   useTitle('Copi');
-  const [email, setEmail] = useState('');
-  const validEmail = useValidateEmail(email);
+  const [password, setPassword] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const validPassword = useValidatePassword(password);
+  const [modalMessage, setModalMessage] = useState('');
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
-  const [login, { isSuccess, isLoading, isError, error }] = useLoginMutation();
-  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
-  const [isSuccessOpen, setIsSuccessOpen] = useToggleModal(isSuccess);
+  useEffect(() => {
+    if (isSuccess) {
+      setIsLoading(true);
+      setTimeout(() => navigate('/login'), 5000);
+    }
+    if (isError) {
+      setIsLoading(true);
+      setTimeout(() => navigate('/forgot-password'), 5000);
+    }
+  }, [isSuccess, isError]);
 
-  const handleSubmit = async (e) => {
+  const sendResetPassword = async (e) => {
     e.preventDefault();
+    try {
+      setIsLoading(true);
+      setIsError(false);
+      setIsSuccess(false);
+      const response = await fetch('/api/v1/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json;charset=UTF-8' },
+        body: JSON.stringify({
+          password: password,
+          email: searchParams.get('email'),
+          token: searchParams.get('token'),
+        }),
+      });
 
-    if (validEmail) {
-      // change message
+      const { message } = await response.json();
+
+      if (response.status === 400) {
+        throw new Error(message);
+      }
+
+      setModalMessage(message);
+      setIsSuccess(true);
+    } catch (error) {
+      setModalMessage(error.message);
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleEmailInput = (e) => setEmail(e.target.value);
+  const [isErrorOpen, setIsErrorOpen] = useToggleModal(isError);
+  const [isSuccessOpen, setIsSuccessOpen] = useToggleModal(isSuccess);
 
-  if (isLoading) return <PulseLoader color={'#FFF'} />;
+  const handlePasswordInput = (e) => setPassword(e.target.value);
+
   return (
-    <section className="auth-section__form">
+    <section className="auth-section__form ">
       {isErrorOpen && (
-        <ErrorModal message={error?.data?.message} setIsOpen={setIsErrorOpen} />
+        <ErrorModal message={modalMessage} setIsOpen={setIsErrorOpen} />
       )}
       {isSuccessOpen && (
-        <SuccessModal
-          message={
-            'Please check your email for the instructions on how to reset your password'
-          }
-          setIsOpen={setIsSuccessOpen}
-        />
+        <SuccessModal message={modalMessage} setIsOpen={setIsSuccessOpen} />
       )}
 
       <h2 className="auth-form__title">Reset Password</h2>
-      <form className="auth-form flex-col" onSubmit={handleSubmit}>
-        <label htmlFor="credential"> Email:</label>
+      <form className="auth-form flex-col" onSubmit={sendResetPassword}>
+        <label htmlFor="password"> New Password:</label>
         <input
-          type="email"
-          id="credential"
-          name="credential"
-          value={email}
-          onChange={handleEmailInput}
+          type="password"
+          id="password"
+          name="password"
+          value={password}
+          onChange={handlePasswordInput}
           autoComplete="off"
-          placeholder="email"
+          placeholder="new password"
           required
         />
-        <button className="btn--black" disabled={!validEmail}>
-          Reset Password
+        <button className="btn--black" disabled={!validPassword || isLoading}>
+          {isLoading ? <Loader color="#FFF" /> : 'Set New Password'}
         </button>
       </form>
-      <div className="center-all auth-form__container--link">
-        <p>
-          Return to
-          <span>
-            <Link to="/register" className="auth-form__link">
-              Login
-            </Link>
-          </span>
-        </p>
-      </div>
     </section>
   );
 };

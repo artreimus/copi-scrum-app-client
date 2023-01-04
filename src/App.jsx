@@ -21,10 +21,11 @@ import PublicBoardAuth from './features/boards/PublicBoardAuth';
 import RequirePrivBoard from './features/auth/RequirePrivBoard';
 import RequirePubBoard from './features/auth/RequirePubBoard';
 import AuthLayout from './features/auth/AuthLayout';
-import ResetPassword from './features/auth/ResetPassword';
+import ForgotPassword from './features/auth/ForgotPassword';
 import BoardPageNotes from './features/boards/BoardPageNotes';
 import BoardPageAbout from './features/boards/BoardPageAbout';
 import RequireUserAuth from './features/auth/RequireUserAuth';
+import ResetPassword from './features/auth/ResetPassword';
 
 function App() {
   useTitle('Copi');
@@ -36,6 +37,7 @@ function App() {
         <Route element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="reset-password" element={<ResetPassword />} />
           {/*end public routes */}
         </Route>
