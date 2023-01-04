@@ -1335,7 +1335,7 @@ input:not(:placeholder-shown):not(:focus):invalid {
   }
 
   .home-main__btn--blue {
-    background-color: #b0c1ffb0;
+    background-color: #3861f6;
     color: #fefefe;
     padding: 0.7em 1.2em;
     align-self: start;

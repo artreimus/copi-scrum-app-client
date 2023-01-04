@@ -65,19 +65,39 @@ const ProfileNav = () => {
           }
         >
           <ul className="profile-tab__menu__list flex-col">
-            <li className="profile-tab__menu__item">
-              <Link to="/dash/user" className="link">
-                Profile
-              </Link>
-            </li>
-            <li className="profile-tab__menu__item">
-              <Link to={`/dash/user/${userId}`} className="link">
-                Update Profile
-              </Link>
-            </li>
-            <li className="profile-tab__menu__item" onClick={onLogoutClicked}>
-              Logout
-            </li>
+            {userId ? (
+              <>
+                <li className="profile-tab__menu__item">
+                  <Link to="/dash/user" className="link">
+                    Profile
+                  </Link>
+                </li>
+                <li className="profile-tab__menu__item">
+                  <Link to={`/dash/user/${userId}`} className="link">
+                    Update Profile
+                  </Link>
+                </li>
+                <li
+                  className="profile-tab__menu__item"
+                  onClick={onLogoutClicked}
+                >
+                  Logout
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="profile-tab__menu__item">
+                  <Link to={'/login'} className="link">
+                    Login
+                  </Link>
+                </li>
+                <li className="profile-tab__menu__item">
+                  <Link to={'/register'} className="link">
+                    Register
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>
