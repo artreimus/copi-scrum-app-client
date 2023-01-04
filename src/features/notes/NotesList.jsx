@@ -65,8 +65,6 @@ const NotesList = ({ boardId }) => {
       }
     });
 
-    console.log(toDos);
-
     content = (
       <>
         <div className="notes-list">

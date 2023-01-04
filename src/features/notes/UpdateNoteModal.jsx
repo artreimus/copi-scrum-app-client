@@ -14,7 +14,7 @@ import ErrorModal from '../../components/ErrorModal';
 import SuccessModal from '../../components/SuccessModal';
 import Loader from 'react-spinners/MoonLoader';
 
-const UpdateNoteForm = ({ note, setIsOpen }) => {
+const UpdateNoteModal = ({ note, setIsOpen }) => {
   const [title, setTitle] = useState(note?.title);
   const [text, setText] = useState(note?.text);
   const [status, setStatus] = useState(note?.status);
@@ -262,4 +262,4 @@ const UpdateNoteForm = ({ note, setIsOpen }) => {
   return content;
 };
 
-export default UpdateNoteForm;
+export default UpdateNoteModal;

@@ -1253,7 +1253,7 @@ input:not(:placeholder-shown):not(:focus):invalid {
   }
 
   .section__header__button--secondary {
-    right: 25%;
+    right: 22%;
   }
 
   .section__header__button--primary--left {

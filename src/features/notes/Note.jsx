@@ -37,7 +37,6 @@ const Note = ({ boardId, noteId }) => {
     const navigateToNotePage = () => navigate(`/dash/notes/${note._id}`);
 
     const usersElement = users?.slice(0, 4).map((user, index) => {
-      console.log(user);
       return (
         <div key={user._id} className="note-item__user center-all">
           {user.image ? (
