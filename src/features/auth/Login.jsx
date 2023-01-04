@@ -117,7 +117,7 @@ const Login = () => {
         <p>
           Forgot your password?
           <span>
-            <Link to="/reset-password" className="auth-form__link">
+            <Link to="/forgot-password" className="auth-form__link">
               Reset Password
             </Link>
           </span>

@@ -44,7 +44,7 @@ const ProfileNav = () => {
         onClick={() => setIsMenuOpen(false)}
       ></div>
       <div className="profile-tab center-all">
-        {isGetUserSuccess && data.user.image ? (
+        {isGetUserSuccess && data?.user?.image ? (
           <button
             className="profile-tab__menu__btn--image"
             onClick={toggleMenu}
