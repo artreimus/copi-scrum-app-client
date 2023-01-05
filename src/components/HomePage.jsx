@@ -1,6 +1,6 @@
 import useTitle from '../hooks/useTitle';
 import { useNavigate } from 'react-router-dom';
-import logoLargeImage from '../img/logo-large.svg';
+import logoImage from '../img/logo-sm.png';
 import notesImage from '../img/notes.png';
 
 const HomePage = () => {
@@ -33,12 +33,8 @@ const HomePage = () => {
       </header>
       <main className="home-main flex-row">
         <div className="home-main__container--primary flex-col">
-          <div className="container__image home-main__container--logo ">
-            <img
-              src={logoLargeImage}
-              alt="Copi Logo"
-              className="home-main__logo"
-            />
+          <div className="container__image home-main__container--logo">
+            <img src={logoImage} alt="Copi Logo" className="home-main__logo" />
           </div>
           <p className="home-main__text text--blue">
             The scrum app that can help your team be more organized and

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-import logoLargeImage from '../img/logo-large.svg';
+import logoImage from '../img/logo-sm.png';
 import ProfileNav from './ProfileNav';
 import useWindowSize from '../hooks/useWindowSize';
 
@@ -55,7 +55,7 @@ const DashHeader = () => {
         </nav>
         <Link to="/dash" className="center-all auth-header__link">
           <div className="container__image auth-header__container--logo">
-            <img src={logoLargeImage} alt="Copi logo" />
+            <img src={logoImage} alt="Copi logo" />
           </div>
         </Link>
         <ProfileNav />
