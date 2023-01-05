@@ -62,15 +62,17 @@ const NotePage = () => {
       endDate = formatDate(endDate);
     }
 
-    const usersElement = users?.map((user) => (
-      <div key={user._id} className="note-item__user center-all">
-        {user.image ? (
+    const usersElement = users?.map((user) =>
+      user.image ? (
+        <div key={user._id} className="note-item__user--image center-all">
           <img src={user.image} alt="user image" className="avatar" />
-        ) : (
-          user.username.charAt(0)
-        )}
-      </div>
-    ));
+        </div>
+      ) : (
+        <div key={user._id} className="note-item__user--default center-all">
+          {user.username.charAt(0)}
+        </div>
+      )
+    );
 
     return (
       <section className="boards-list">
