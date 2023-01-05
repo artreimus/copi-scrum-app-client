@@ -1235,6 +1235,20 @@ button:disabled {
   font-size: 0.8rem;
 }
 
+.user-note {
+  background-color: #ffffff;
+  padding: 0.75rem 1rem;
+  /* width: 90%; */
+  /* max-width: 400px; */
+}
+
+.user-notes__container--notes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  justify-content: center;
+  gap: 1rem 1rem;
+}
+
 input:not(:placeholder-shown):not(:focus):invalid {
   border: 1px solid red;
 }

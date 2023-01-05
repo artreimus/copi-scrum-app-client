@@ -26,6 +26,7 @@ import BoardPageNotes from './features/boards/BoardPageNotes';
 import BoardPageAbout from './features/boards/BoardPageAbout';
 import RequireUserAuth from './features/auth/RequireUserAuth';
 import ResetPassword from './features/auth/ResetPassword';
+import UserNotes from './features/notes/UserNotes';
 
 function App() {
   useTitle('Copi');
@@ -80,7 +81,7 @@ function App() {
 
                 {/* note routes */}
                 <Route path="notes">
-                  <Route index element={<NotesList />} />
+                  <Route index element={<UserNotes />} />
                   <Route path=":id" element={<NotePage />} />
                 </Route>
               </Route>

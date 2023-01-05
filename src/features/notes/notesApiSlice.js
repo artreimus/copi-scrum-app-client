@@ -35,6 +35,30 @@ export const notesApiSlice = apiSlice.injectEndpoints({
         } else return [{ type: 'Note', id: 'LIST' }];
       },
     }),
+    getUserNotes: builder.query({
+      query: () => ({
+        url: `/notes/user-notes`,
+        validateStatus: (response, result) => {
+          return response.status === 200 && !result.isError;
+        },
+      }),
+      transformResponse: (responseData) => {
+        // ensure responseData is an array
+        const loadednotes = responseData.map((note) => {
+          note.id = note._id;
+          return note;
+        });
+        return notesAdapter.setAll(initialState, loadednotes);
+      },
+      providesTags: (result, error, arg) => {
+        if (result?.ids) {
+          return [
+            { type: 'Note', id: 'LIST' },
+            ...result.ids.map((id) => ({ type: 'Note', id })),
+          ];
+        } else return [{ type: 'Note', id: 'LIST' }];
+      },
+    }),
     getSingleNote: builder.query({
       query: (noteId) => ({
         url: `/notes/${noteId}`,
@@ -78,6 +102,7 @@ export const notesApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetNotesQuery,
+  useGetUserNotesQuery,
   useGetSingleNoteQuery,
   useAddNewNoteMutation,
   useUpdateNoteMutation,
