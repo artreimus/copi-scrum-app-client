@@ -44,7 +44,15 @@ const NotePage = () => {
 
   if (isSuccess) {
     const { note } = data;
-    let { title, text, users, startDate, endDate, boardId: board } = note;
+    let {
+      title,
+      text,
+      users,
+      status,
+      startDate,
+      endDate,
+      boardId: board,
+    } = note;
 
     if (startDate) {
       startDate = formatDate(startDate);
@@ -97,6 +105,8 @@ const NotePage = () => {
           <div className="article__about__grid">
             <p className="article__about__label">Board</p>
             <p>{board?.title}</p>
+            <p className="article__about__label">Status</p>
+            <p>{status}</p>
             <p className="article__about__label">Start Date (Target)</p>
             <p>{startDate ?? 'None'}</p>
             <p className="article__about__label">End Date (Target)</p>
