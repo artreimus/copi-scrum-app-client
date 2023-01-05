@@ -4,15 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const UserNote = ({ note }) => {
   const navigate = useNavigate();
 
-  const {
-    title,
-    text,
-    status,
-    startDate,
-    endDate,
-    boardId: board,
-    users,
-  } = note;
+  let { title, text, status, startDate, endDate, boardId: board, users } = note;
 
   if (startDate) {
     startDate = formatDate(startDate);
