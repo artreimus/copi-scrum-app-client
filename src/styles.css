@@ -576,6 +576,10 @@ button:disabled {
   justify-content: center;
 }
 
+.home-main__container--logo {
+  margin-bottom: 0.75rem;
+}
+
 .home-main__btn--blue {
   align-self: center;
 }
@@ -622,7 +626,7 @@ button:disabled {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.2rem 1rem;
+  padding: 1rem 1.5rem;
 }
 
 .auth-header__link {
@@ -1380,7 +1384,7 @@ input:not(:placeholder-shown):not(:focus):invalid {
   }
 
   .dash-header {
-    padding: 0rem 2rem;
+    padding: 0.5rem 2rem;
   }
 
   .section__header {
