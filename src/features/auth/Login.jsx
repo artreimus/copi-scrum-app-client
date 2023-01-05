@@ -94,6 +94,7 @@ const Login = () => {
           id="password"
           onChange={handlePwdInput}
           value={password}
+          placeholder="password"
           autoComplete="off"
           required
         />
